@@ -2,7 +2,17 @@ from rest_framework import serializers
 
 from .models import Film, Rating
 
-class FilmSerializer(serializers.ModelSerializer):
+class DynamicFieldsModelSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
+        try:
+            fields_string = self.context['request'].query_params['fields']
+        except KeyError:
+            return
+        for field_name in set(self.fields.keys()) - set(fields_string.split(',')):
+            self.fields.pop(field_name)
+
+class FilmSerializer(DynamicFieldsModelSerializer):
     average_score = serializers.ReadOnlyField()
 
     class Meta:
