@@ -1,7 +1,8 @@
 from django.http import JsonResponse
 
 
-from .models import Test
+from .models import Film
 
-def test_func(request):
-    return JsonResponse({'foo': Test.objects.get(pk=1).name})
+def get_film(request, film_id):
+    film = Film.objects.get(pk=film_id)
+    return JsonResponse(film.serialize())

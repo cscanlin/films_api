@@ -19,5 +19,5 @@ from . import api_controller
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^test_func/', api_controller.test_func, name='test_func')
+    url(r'^films/(?P<film_id>[0-9]+)', api_controller.get_film, name='get_film')
 ]
