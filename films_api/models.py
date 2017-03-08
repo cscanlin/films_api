@@ -3,7 +3,6 @@ import json
 from django.db import models
 
 from django.conf import settings
-from django.forms.models import model_to_dict
 
 class Film(models.Model):
     title = models.CharField(max_length=255, null=True, blank=True)
@@ -25,9 +24,3 @@ class Film(models.Model):
                     setattr(film, k, v)
                 film.related_films.add(*(cls.objects.get_or_create(pk=rel_id)[0] for rel_id in related_film_ids))
                 film.save()
-
-    def serialize(self, exclude={'related_films'}):
-        return {
-            'film': model_to_dict(self, exclude=exclude),
-            'related_films': [model_to_dict(related, exclude=exclude) for related in self.related_films.all()],
-        }
