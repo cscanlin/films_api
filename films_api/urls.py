@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^films/$', api_controller.FilmList.as_view()),
     url(r'^films/(?P<pk>[0-9]+)/$', api_controller.FilmDetail.as_view()),
+    url(r'^films/(?P<url_slug>[-\w]+)/$', api_controller.FilmDetail.as_view(lookup_field='url_slug')),
     url(r'^ratings/$', api_controller.RatingList.as_view()),
     url(r'^ratings/(?P<pk>[0-9]+)/$', api_controller.RatingDetail.as_view()),
 ]
