@@ -1,2 +1,4 @@
 django
-django-rest-framework
+djangorestframework
+django-filter
+django-crispy-forms
