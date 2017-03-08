@@ -1,8 +1,11 @@
 import os
 import json
-from django.db import models
+import statistics
 
+from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 class Film(models.Model):
     title = models.CharField(max_length=255, null=True, blank=True)
@@ -24,3 +27,17 @@ class Film(models.Model):
                     setattr(film, k, v)
                 film.related_films.add(*(cls.objects.get_or_create(pk=rel_id)[0] for rel_id in related_film_ids))
                 film.save()
+
+    @property
+    def average_score(self):
+        try:
+            return statistics.mean(rating.score for rating in self.ratings.all())
+        except statistics.StatisticsError:
+            return 0
+
+class Rating(models.Model):
+    film = models.ForeignKey(Film, related_name='ratings')
+    score = models.IntegerField(validators=[
+        MinValueValidator(0),
+        MaxValueValidator(10),
+    ])
