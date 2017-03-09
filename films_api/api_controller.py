@@ -1,6 +1,6 @@
 from .models import Film, Rating
 from .serializers import RootFilmSerializer, RatingSerializer
-from rest_framework import generics
+from rest_framework import generics, mixins
 import django_filters
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 
@@ -15,13 +15,13 @@ class FilmFilter(FilterSet):
         fields = ['min_year', 'max_year', 'title', 'description']
 
 class FilmList(generics.ListCreateAPIView):
-    queryset = Film.objects.all()
+    queryset = Film.objects.all().prefetch_related('ratings')
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = FilmFilter
 
 class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Film.objects.all()
+    queryset = Film.objects.all().prefetch_related('ratings')
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = FilmFilter
@@ -33,3 +33,12 @@ class RatingList(generics.ListCreateAPIView):
 class RatingDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
+
+class FilmRatingList(mixins.ListModelMixin, generics.GenericAPIView):
+    serializer_class = RatingSerializer
+
+    def get_queryset(self):
+        return Film.objects.get(**self.kwargs).ratings.all()
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)

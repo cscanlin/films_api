@@ -35,18 +35,47 @@ class FilmTests(APITestCase):
         self.assertEqual(film.average_score, 5)
 
 class RatingTests(APITestCase):
-    def test_add_rating_general(self):
+
+    def setUp(self):
+        self.film = Film.objects.create(title='ranked film')
+
+    def test_create_rating(self):
         client = APIClient()
         api_route = '/ratings/'
-        film = Film.objects.create(title='ranked film')
-        response = client.post(api_route, {'film': film.id, 'score': 5}, format='json')
+        response = client.post(api_route, {'film': self.film.id, 'score': 5}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Rating.objects.count(), 1)
 
-    def test_add_rating_film(self):
+    def test_retrieve_rating(self):
         client = APIClient()
-        film = Film.objects.create(title='ranked film')
-        api_route = 'film/{}/ratings/'.format(film.id)
-        response = client.post(api_route, {'score': 5}, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Film.objects.get().ratings.count(), 1)
+        rating = Rating.objects.create(film=self.film, score=4)
+        response = client.get('/ratings/{}/'.format(rating.id), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        rating = Rating.objects.get()
+        self.assertEqual(rating.film.id, self.film.id)
+        self.assertEqual(rating.score, 4)
+
+    def test_list_ratings(self):
+        client = APIClient()
+        Rating.objects.create(film=self.film, score=4)
+        Rating.objects.create(film=self.film, score=6)
+        response = client.get('/ratings/', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 2)
+        results = response.data['results']
+        self.assertEqual(results[0]['film'], self.film.id)
+        self.assertEqual(results[0]['score'], 4)
+        self.assertEqual(results[1]['film'], self.film.id)
+        self.assertEqual(results[1]['score'], 6)
+
+    def test_list_film_ratings(self):
+        client = APIClient()
+        Rating.objects.create(film=self.film, score=4)
+        Rating.objects.create(film=self.film, score=6)
+        api_route = '/films/{}/ratings/'.format(self.film.id)
+        response = client.get(api_route, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Film.objects.get().ratings.count(), 2)
+        results = response.data['results']
+        self.assertEqual(results[0]['score'], 4)
+        self.assertEqual(results[1]['score'], 6)
