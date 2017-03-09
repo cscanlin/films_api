@@ -2,3 +2,4 @@ django
 djangorestframework
 django-filter
 django-crispy-forms
+drfdocs

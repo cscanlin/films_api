@@ -11,6 +11,16 @@ class FilmTests(APITestCase):
         self.assertEqual(Film.objects.count(), 1)
         self.assertEqual(Film.objects.get().title, 'created film')
 
+    def test_create_film_with_related(self):
+        client = APIClient()
+        related_film = Film.objects.create(title='related film')
+        response = client.post(
+            '/films/', {'title': 'created film', 'related_films': [related_film.id]}, format='json'
+        )
+
+        self.assertEqual(response.data['related_films'][0], related_film.id)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
     def test_retrieve_film(self):
         client = APIClient()
         film = Film.objects.create(title='retrieved film')
@@ -32,7 +42,7 @@ class FilmTests(APITestCase):
         film = Film.objects.create(title='ranked film')
         Rating.objects.create(film=film, score=4)
         Rating.objects.create(film=film, score=6)
-        self.assertEqual(film.average_score, 5)
+        self.assertEqual(film._average_score, 5)
 
 class RatingTests(APITestCase):
 
