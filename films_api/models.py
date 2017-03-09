@@ -29,7 +29,7 @@ class Film(models.Model):
                 film.save()
 
     @property
-    def average_score(self):
+    def _average_score(self):
         try:
             return statistics.mean(rating.score for rating in self.ratings.all())
         except statistics.StatisticsError:

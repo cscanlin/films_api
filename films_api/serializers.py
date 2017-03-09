@@ -13,7 +13,7 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
             self.fields.pop(field_name)
 
 class FilmSerializer(DynamicFieldsModelSerializer):
-    average_score = serializers.ReadOnlyField()
+    average_score = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Film

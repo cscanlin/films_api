@@ -1,8 +1,9 @@
 from .models import Film, Rating
 from .serializers import RootFilmSerializer, RatingSerializer
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, filters
 import django_filters
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
+from django.db.models import Avg
 
 class FilmFilter(FilterSet):
     min_year = django_filters.NumberFilter(name="year", lookup_expr='gte')
@@ -15,13 +16,13 @@ class FilmFilter(FilterSet):
         fields = ['min_year', 'max_year', 'title', 'description']
 
 class FilmList(generics.ListCreateAPIView):
-    queryset = Film.objects.all().prefetch_related('ratings')
+    queryset = Film.objects.all().annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filter_class = FilmFilter
 
 class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Film.objects.all().prefetch_related('ratings')
+    queryset = Film.objects.all().annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = FilmFilter
