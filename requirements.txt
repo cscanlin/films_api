@@ -5,3 +5,4 @@ django-crispy-forms
 drfdocs
 gunicorn
 dj-database-url
+psycopg2
