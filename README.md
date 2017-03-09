@@ -15,6 +15,12 @@ Then got to http://127.0.0.1:8000/
 
 This project is built with Django and heavily leverages the django-rest-framework.
 
-The API logic is stored in 4 main parts:
+The API logic is split among 4 main parts:
 
 1. `models.py` - Defines the Film and Ranking models and their (typed) attributes. Also holds the logic for loading the sample data from json.
+
+2. `serializers.py` - Controls which fields should be pulled from each model, including logic with dynamic fields. Also handles any nesting functionality.
+
+3. `api_controller.py` - Contains classes which dispatch and execute all CRUD logic. Also handles all of the filtering logic.
+
+4. `urls.py` - Defines the routes and connects matching view/controller functionality.

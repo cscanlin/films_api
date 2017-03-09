@@ -31,4 +31,4 @@ class FilmRatingSerializer(serializers.ModelSerializer):
         exclude = ('film',)
 
 class RootFilmSerializer(FilmSerializer):
-    ratings = FilmRatingSerializer(many=True, required=False)
+    ratings = FilmRatingSerializer(read_only=True, many=True, required=False)
