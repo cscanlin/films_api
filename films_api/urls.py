@@ -19,6 +19,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from . import api_controller
 
+# Defines the routes and connects matching view/controller functionality.
+# Supports top level routes for `/films` and `/ratings`,
+# as well as support for nested routes like `/films/<id>/ratings`
+
 urlpatterns = [
     url(r'^films/$', api_controller.FilmList.as_view()),
     url(r'^films/(?P<pk>[0-9]+)/$', api_controller.FilmDetail.as_view()),
@@ -30,4 +34,5 @@ urlpatterns = [
     url(r'^ratings/(?P<pk>[0-9]+)/$', api_controller.RatingDetail.as_view()),
     url(r'^admin/', admin.site.urls),
     url(r'^docs/', include('rest_framework_docs.urls')),
+    url(r'^$', api_controller.home, name='home'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

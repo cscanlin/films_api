@@ -19,7 +19,7 @@ Then got to http://127.0.0.1:8000/
 
 This project is built with Django and heavily leverages the django-rest-framework.
 
-Full Endpoint docs are available at: https://films-api.herokuapp.com/docs
+Full endpoint docs are available at: https://films-api.herokuapp.com/docs
 
 The API logic is split among 4 main parts:
 
@@ -30,3 +30,15 @@ The API logic is split among 4 main parts:
 3. `api_controller.py` - Contains classes which dispatch and execute all CRUD logic. Also handles all of the filtering logic.
 
 4. `urls.py` - Defines the routes and connects matching view/controller functionality.
+
+The django-rest-framework is useful because it removes much of the boilerplate associated with a standard django rest app, and makes it extremely easy to add the full list of http verbs to each endpoint. It also makes it easy to add useful features like pagination filtering, and ordering, that can be fully customized based on each use case.
+
+I have also included an additional library and make full endpoint documentation based on code structure (Available at https://films-api.herokuapp.com/docs)
+
+The application is deployed on a free heroku instance as well, and can be viewed live at: https://films-api.herokuapp.com/
+
+### Tests
+
+Tests are in `tests.py` and can be run with:
+
+    python manage.py test

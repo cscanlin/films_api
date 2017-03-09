@@ -12,6 +12,8 @@ class Film(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     url_slug = models.CharField(max_length=255, null=True, blank=True)
     year = models.IntegerField(null=True, blank=True)
+
+    # many to many related with itself. There is a hidden through table
     related_films = models.ManyToManyField('self', blank=True)
 
     def __str__(self):
@@ -19,6 +21,7 @@ class Film(models.Model):
 
     @classmethod
     def load_from_file(cls, filename=os.path.join(settings.BASE_DIR, 'films.json')):
+        # loads data from sample file. (could be made more efficient)
         with open(filename) as f:
             for film_data in json.load(f)['films']:
                 related_film_ids = film_data.pop('related_film_ids', [])
@@ -30,6 +33,7 @@ class Film(models.Model):
 
     @property
     def _average_score(self):
+        # favor `query.annotate(average_score=Avg('ratings__score'))`
         try:
             return statistics.mean(rating.score for rating in self.ratings.all())
         except statistics.StatisticsError:

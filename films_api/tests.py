@@ -2,6 +2,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from .models import Film, Rating
 
+# django-rest-framework also provides a handy toolset for testing, which is leveraged extensively.
+
 class FilmTests(APITestCase):
 
     def test_create_film(self):
