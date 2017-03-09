@@ -23,6 +23,8 @@ class RootFilmSerializer(FilmSerializer):
     related_films = FilmSerializer(many=True, required=False)
 
 class RatingSerializer(serializers.ModelSerializer):
+    film = FilmSerializer()
+
     class Meta:
         model = Rating
         fields = '__all__'

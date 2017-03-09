@@ -16,13 +16,13 @@ class FilmFilter(FilterSet):
         fields = ['min_year', 'max_year', 'title', 'description']
 
 class FilmList(generics.ListCreateAPIView):
-    queryset = Film.objects.all().annotate(average_score=Avg('ratings__score'))
+    queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filter_class = FilmFilter
 
 class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Film.objects.all().annotate(average_score=Avg('ratings__score'))
+    queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = FilmFilter
