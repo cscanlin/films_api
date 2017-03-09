@@ -29,5 +29,7 @@ class RatingSerializer(serializers.ModelSerializer):
         model = Rating
         fields = '__all__'
 
-
-# fields = ('title', 'description', 'url_slug', 'year', 'average_score')
+class FilmRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        exclude = ('film',)

@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^films/(?P<url_slug>[-\w]+)/$', api_controller.FilmDetail.as_view(lookup_field='url_slug')),
     url(r'^films/(?P<pk>[0-9]+)/ratings/$', api_controller.FilmRatingList.as_view()),
     url(r'^films/(?P<url_slug>[-\w]+)/ratings/$', api_controller.FilmRatingList.as_view(lookup_field='url_slug')),
+    url(r'^films/(?P<film_id>[-\w]+)/ratings/(?P<pk>[0-9]+)$', api_controller.RatingDetail.as_view()),
     url(r'^ratings/$', api_controller.RatingList.as_view()),
     url(r'^ratings/(?P<pk>[0-9]+)/$', api_controller.RatingDetail.as_view()),
 ]
