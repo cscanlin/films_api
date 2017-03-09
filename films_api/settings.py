@@ -78,7 +78,6 @@ WSGI_APPLICATION = 'films_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-db_from_env = dj_database_url.config(conn_max_age=500)
 
 environment_type = os.getenv('DJANGO_CONFIGURATION', 'dev')
 DATABASES = {}
@@ -88,8 +87,7 @@ if environment_type == 'dev':
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 elif environment_type in ['Prod', 'Stage']:
-    DATABASES['default'].update(db_from_env)
-
+    DATABASES['default'] = dj_database_url.config(conn_max_age=500)
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
