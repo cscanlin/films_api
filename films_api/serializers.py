@@ -4,7 +4,7 @@ from .models import Film, Rating
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
-        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         try:
             fields_string = self.context['request'].query_params['fields']
         except KeyError:
@@ -20,7 +20,7 @@ class FilmSerializer(DynamicFieldsModelSerializer):
         exclude = ('related_films',)
 
 class RootFilmSerializer(FilmSerializer):
-    related_films = FilmSerializer(many=True)
+    related_films = FilmSerializer(many=True, required=False)
 
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:
