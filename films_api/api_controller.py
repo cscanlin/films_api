@@ -6,7 +6,17 @@ import django_filters
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django.db.models import Avg
 
+class IntegerListFilter(django_filters.Filter):
+    # http://stackoverflow.com/a/24042182/1883900
+    def filter(self, qs, value):
+        if value not in (None, ''):
+            integers = [int(v) for v in value.split(',')[:100]]
+            return qs.filter(**{'{}__{}'.format(self.name, self.lookup_expr): integers})
+        return qs
+
+
 class FilmFilter(FilterSet):
+    ids = IntegerListFilter(name="id", lookup_expr='in')
     min_year = django_filters.NumberFilter(name="year", lookup_expr='gte')
     max_year = django_filters.NumberFilter(name="year", lookup_expr='lte')
     title = django_filters.CharFilter(name="title", lookup_expr='icontains')
@@ -14,7 +24,7 @@ class FilmFilter(FilterSet):
 
     class Meta:
         model = Film
-        fields = ['min_year', 'max_year', 'title', 'description']
+        fields = ['ids', 'min_year', 'max_year', 'title', 'description']
 
 class FilmList(generics.ListCreateAPIView):
     queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
