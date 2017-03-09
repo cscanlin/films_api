@@ -13,12 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from . import api_controller
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
     url(r'^films/$', api_controller.FilmList.as_view()),
     url(r'^films/(?P<pk>[0-9]+)/$', api_controller.FilmDetail.as_view()),
     url(r'^films/(?P<url_slug>[-\w]+)/$', api_controller.FilmDetail.as_view(lookup_field='url_slug')),
@@ -27,4 +26,6 @@ urlpatterns = [
     url(r'^films/(?P<film_id>[-\w]+)/ratings/(?P<pk>[0-9]+)$', api_controller.RatingDetail.as_view()),
     url(r'^ratings/$', api_controller.RatingList.as_view()),
     url(r'^ratings/(?P<pk>[0-9]+)/$', api_controller.RatingDetail.as_view()),
+    url(r'^admin/', admin.site.urls),
+    url(r'^docs/', include('rest_framework_docs.urls')),
 ]

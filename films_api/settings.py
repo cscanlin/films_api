@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'films_api',
     'rest_framework',
     'crispy_forms',
+    'rest_framework_docs',
 ]
 
 MIDDLEWARE = [
@@ -133,6 +134,7 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
+# https://gagor.pl/2014/05/quickly-setup-sql-query-logging-on-console-in-django/
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

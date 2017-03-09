@@ -19,9 +19,6 @@ class FilmSerializer(DynamicFieldsModelSerializer):
         model = Film
         exclude = ('related_films',)
 
-class RootFilmSerializer(FilmSerializer):
-    related_films = FilmSerializer(many=True, required=False)
-
 class RatingSerializer(serializers.ModelSerializer):
     film = FilmSerializer()
 
@@ -33,3 +30,7 @@ class FilmRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
         exclude = ('film',)
+
+class RootFilmSerializer(FilmSerializer):
+    related_films = FilmSerializer(many=True, required=False)
+    ratings = FilmRatingSerializer(many=True, required=False)
