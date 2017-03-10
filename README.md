@@ -33,7 +33,7 @@ The API logic is split among 4 main parts:
 
 The django-rest-framework is useful because it removes much of the boilerplate associated with a standard django rest app, and makes it extremely easy to add the full list of http verbs to each endpoint. It also makes it easy to add useful features like pagination filtering, and ordering, that can be fully customized based on each use case.
 
-I have also included an additional library and make full endpoint documentation based on code structure (Available at https://films-api.herokuapp.com/docs)
+One other nice feature of django-rest, is that when you go to the api routes in a web browser, you will see a convenient browsable API with widgets for making requests, and controlling filters and ordering. This response is controlled by the request headers, and only returns the browsable view if the `Accept` header is set to `text/html` (which most browser have by default). I have also included an additional library and make full endpoint documentation based on code structure (Available at https://films-api.herokuapp.com/docs)
 
 The application is deployed on a free heroku instance as well, and can be viewed live at: https://films-api.herokuapp.com/
 
