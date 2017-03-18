@@ -23,9 +23,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('FILMS_API_SECRET')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'films-api.herokuapp.com']
 
 
@@ -87,8 +84,11 @@ if environment_type == 'dev':
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
 elif environment_type in ['Prod', 'Stage']:
     DATABASES['default'] = dj_database_url.config(conn_max_age=500)
+    DEBUG = False
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
