@@ -30,6 +30,11 @@ ALLOWED_HOSTS = [
     'www.{}'.format(os.getenv('ALLOWED_HOST'))
 ]
 
+print('============')
+print('============')
+print(ALLOWED_HOSTS)
+print('============')
+print('============')
 
 # Application definition
 
