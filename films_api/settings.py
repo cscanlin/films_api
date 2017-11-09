@@ -21,20 +21,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('FILMS_API_SECRET')
+SECRET_KEY = os.getenv('FILMS_API_SECRET', '0I1rDQ2kHUnP0PbrMlxt')
 
 ALLOWED_HOSTS = [
-    'localhost', 
-    '127.0.0.1', 
-    os.getenv('ALLOWED_HOST'), 
+    'localhost',
+    '127.0.0.1',
+    os.getenv('ALLOWED_HOST'),
     'www.{}'.format(os.getenv('ALLOWED_HOST'))
 ]
-
-print('============')
-print('============')
-print(ALLOWED_HOSTS)
-print('============')
-print('============')
 
 # Application definition
 
