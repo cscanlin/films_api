@@ -23,7 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('FILMS_API_SECRET')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'films-api.herokuapp.com']
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    os.environ.get('ALLOWED_HOST'), 
+    'www.{}'.format(os.environ.get('ALLOWED_HOST'))
+]
 
 
 # Application definition
