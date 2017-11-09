@@ -26,8 +26,8 @@ SECRET_KEY = os.getenv('FILMS_API_SECRET')
 ALLOWED_HOSTS = [
     'localhost', 
     '127.0.0.1', 
-    os.environ.get('ALLOWED_HOST'), 
-    'www.{}'.format(os.environ.get('ALLOWED_HOST'))
+    os.getenv('ALLOWED_HOST'), 
+    'www.{}'.format(os.getenv('ALLOWED_HOST'))
 ]
 
 
