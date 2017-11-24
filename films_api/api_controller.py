@@ -59,7 +59,7 @@ class FilmList(generics.ListCreateAPIView):
     filter_class = FilmFilter
 
     def get_authenticators(self):
-        if 'docs' not in self.request.path:
+        if 'docs' not in self.request.META['HTTP_REFERER']:
             return [JWTAuthentication()]
         return super().get_authenticators()
 
@@ -71,7 +71,7 @@ class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
     filter_class = FilmFilter
 
     def get_authenticators(self):
-        if 'docs' not in self.request.path:
+        if 'docs' not in self.request.META['HTTP_REFERER']:
             return [JWTAuthentication()]
         return super().get_authenticators()
 
@@ -83,7 +83,7 @@ class RatingList(generics.ListCreateAPIView):
     filter_class = RatingFilter
 
     def get_authenticators(self):
-        if 'docs' not in self.request.path:
+        if 'docs' not in self.request.META['HTTP_REFERER']:
             return [JWTAuthentication()]
         return super().get_authenticators()
 
@@ -95,7 +95,7 @@ class RatingDetail(generics.RetrieveUpdateDestroyAPIView):
     filter_class = RatingFilter
 
     def get_authenticators(self):
-        if 'docs' not in self.request.path:
+        if 'docs' not in self.request.META['HTTP_REFERER']:
             return [JWTAuthentication()]
         return super().get_authenticators()
 
@@ -121,6 +121,6 @@ class FilmRatingList(mixins.ListModelMixin, generics.GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_authenticators(self):
-        if 'docs' not in self.request.path:
+        if 'docs' not in self.request.META['HTTP_REFERER']:
             return [JWTAuthentication()]
         return super().get_authenticators()
