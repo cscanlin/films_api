@@ -9,3 +9,5 @@ psycopg2
 whitenoise
 
 git+https://github.com/Decorist/projCommon
+
+django-cors-headers

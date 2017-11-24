@@ -43,9 +43,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'crispy_forms',
     'rest_framework_docs',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -171,3 +173,12 @@ LOGGING = {
         },
     }
 }
+
+##################################################################
+# CORS HEADERS configs
+##################################################################
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+
+
