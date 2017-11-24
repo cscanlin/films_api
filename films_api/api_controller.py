@@ -7,6 +7,9 @@ from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django.db.models import Avg
 from django.http import HttpResponseRedirect
 
+# from proj_common.authentication.permissions import JWTBasePermission
+from proj_common.authentication.authentication import JWTAuthentication
+
 def home(request):
     return HttpResponseRedirect('/docs')
 
@@ -48,6 +51,8 @@ class RatingFilter(FilterSet):
 # including an ordering filter. Pagination is applied to all rest requests, and is set in `settings.py`
 
 class FilmList(generics.ListCreateAPIView):
+    authentication_classes = (JWTAuthentication, )
+
     # The following query allows the fetching of all films, their related films details,
     # and the average rating all in one query.
     queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
@@ -56,24 +61,32 @@ class FilmList(generics.ListCreateAPIView):
     filter_class = FilmFilter
 
 class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = (JWTAuthentication, )
+
     queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = FilmFilter
 
 class RatingList(generics.ListCreateAPIView):
+    authentication_classes = (JWTAuthentication, )
+
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = RatingFilter
 
 class RatingDetail(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = (JWTAuthentication, )
+
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = RatingFilter
 
 class FilmRatingList(mixins.ListModelMixin, generics.GenericAPIView):
+    authentication_classes = (JWTAuthentication, )
+
     serializer_class = FilmRatingSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = RatingFilter

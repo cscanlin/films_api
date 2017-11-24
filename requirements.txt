@@ -7,3 +7,5 @@ gunicorn
 dj-database-url
 psycopg2
 whitenoise
+
+git+https://github.com/Decorist/projCommon

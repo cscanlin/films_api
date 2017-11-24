@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages',
+    # 'django.contrib.messages',
     'django.contrib.staticfiles',
     'films_api',
     'rest_framework',
@@ -82,16 +82,25 @@ WSGI_APPLICATION = 'films_api.wsgi.application'
 
 
 environment_type = os.getenv('DJANGO_CONFIGURATION', 'dev')
-DATABASES = {}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('RDS_DB_NAME', ''),
+        'USER': os.environ.get('RDS_USERNAME', ''),
+        'PASSWORD': os.environ.get('RDS_PASSWORD', ''),
+        'HOST': os.environ.get('RDS_HOSTNAME', ''),
+        'PORT': os.environ.get('RDS_PORT', ''),
+    },
+}
 if environment_type == 'dev':
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    # DATABASES['default'] = {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
 elif environment_type in ['Prod', 'Stage']:
-    DATABASES['default'] = dj_database_url.config(conn_max_age=500)
+    # DATABASES['default'] = dj_database_url.config(conn_max_age=500)
     DEBUG = False
 
 # Password validation
