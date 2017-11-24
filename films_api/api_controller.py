@@ -51,8 +51,6 @@ class RatingFilter(FilterSet):
 # including an ordering filter. Pagination is applied to all rest requests, and is set in `settings.py`
 
 class FilmList(generics.ListCreateAPIView):
-    authentication_classes = (JWTAuthentication, )
-
     # The following query allows the fetching of all films, their related films details,
     # and the average rating all in one query.
     queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
@@ -60,33 +58,49 @@ class FilmList(generics.ListCreateAPIView):
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filter_class = FilmFilter
 
-class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = (JWTAuthentication, )
+    def get_authenticators(self):
+        if 'docs' not in self.request.path:
+            return [JWTAuthentication()]
+        return super().get_authenticators()
 
+
+class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = FilmFilter
 
-class RatingList(generics.ListCreateAPIView):
-    authentication_classes = (JWTAuthentication, )
+    def get_authenticators(self):
+        if 'docs' not in self.request.path:
+            return [JWTAuthentication()]
+        return super().get_authenticators()
 
+
+class RatingList(generics.ListCreateAPIView):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = RatingFilter
+
+    def get_authenticators(self):
+        if 'docs' not in self.request.path:
+            return [JWTAuthentication()]
+        return super().get_authenticators()
+
 
 class RatingDetail(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = (JWTAuthentication, )
-
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = RatingFilter
 
-class FilmRatingList(mixins.ListModelMixin, generics.GenericAPIView):
-    authentication_classes = (JWTAuthentication, )
+    def get_authenticators(self):
+        if 'docs' not in self.request.path:
+            return [JWTAuthentication()]
+        return super().get_authenticators()
 
+
+class FilmRatingList(mixins.ListModelMixin, generics.GenericAPIView):
     serializer_class = FilmRatingSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = RatingFilter
@@ -105,3 +119,8 @@ class FilmRatingList(mixins.ListModelMixin, generics.GenericAPIView):
             serializer.save(film_id=kwargs['pk'])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_authenticators(self):
+        if 'docs' not in self.request.path:
+            return [JWTAuthentication()]
+        return super().get_authenticators()
