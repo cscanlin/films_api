@@ -53,7 +53,8 @@ class RatingFilter(FilterSet):
 class FilmList(generics.ListCreateAPIView):
     # The following query allows the fetching of all films, their related films details,
     # and the average rating all in one query.
-    queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
+    # queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
+    queryset = Film.objects.all().annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filter_class = FilmFilter
@@ -67,7 +68,8 @@ class FilmList(generics.ListCreateAPIView):
 
 
 class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
+    # queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
+    queryset = Film.objects.all().annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = FilmFilter
