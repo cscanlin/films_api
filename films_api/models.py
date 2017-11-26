@@ -11,6 +11,7 @@ class Film(models.Model):
     title = models.CharField(max_length=255, null=True, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     year = models.IntegerField(null=True, blank=True)
+    img_url = models.CharField(max_length=10000, null=True, blank=True)
 
     # many to many related with itself. There is a hidden through table
     # related_films = models.ManyToManyField('self', blank=True)
