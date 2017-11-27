@@ -24,15 +24,13 @@ from . import api_controller
 # as well as support for nested routes like `/films/<id>/ratings`
 
 urlpatterns = [
-    url(r'^films/$', api_controller.FilmList.as_view()),
-    url(r'^films/(?P<pk>[0-9]+)/$', api_controller.FilmDetail.as_view()),
-    url(r'^films/(?P<url_slug>[-\w]+)/$', api_controller.FilmDetail.as_view(lookup_field='url_slug')),
-    url(r'^films/(?P<pk>[0-9]+)/ratings/$', api_controller.FilmRatingList.as_view()),
-    url(r'^films/(?P<url_slug>[-\w]+)/ratings/$', api_controller.FilmRatingList.as_view(lookup_field='url_slug')),
-    url(r'^films/(?P<film_id>[-\w]+)/ratings/(?P<pk>[0-9]+)$', api_controller.RatingDetail.as_view()),
-    url(r'^ratings/$', api_controller.RatingList.as_view()),
-    url(r'^ratings/(?P<pk>[0-9]+)/$', api_controller.RatingDetail.as_view()),
-    url(r'^admin/', admin.site.urls),
-    url(r'^docs/', include('rest_framework_docs.urls')),
+    url(r'^api/v1/films/?$', api_controller.FilmList.as_view()),
+    url(r'^api/v1/films/(?P<pk>[0-9]+)/?$', api_controller.FilmDetail.as_view()),
+    url(r'^api/v1/films/(?P<pk>[0-9]+)/ratings/?$', api_controller.FilmRatingList.as_view()),
+    url(r'^api/v1/films/(?P<film_id>[-\w]+)/ratings/(?P<pk>[0-9]+)/?$', api_controller.RatingDetail.as_view()),
+    url(r'^api/v1/ratings/?$', api_controller.RatingList.as_view()),
+    url(r'^api/v1/ratings/(?P<pk>[0-9]+)/?$', api_controller.RatingDetail.as_view()),
+    url(r'^admin/?', admin.site.urls),
+    url(r'^docs/?', include('rest_framework_docs.urls')),
     url(r'^$', api_controller.home, name='home'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

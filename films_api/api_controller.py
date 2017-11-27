@@ -1,11 +1,14 @@
 from .models import Film, Rating
 from .serializers import RootFilmSerializer, RatingSerializer, FilmRatingSerializer
-from rest_framework import generics, mixins, filters, status
+from rest_framework import generics, mixins, filters, status, permissions
 from rest_framework.response import Response
 import django_filters
 from django_filters.rest_framework import FilterSet, DjangoFilterBackend
 from django.db.models import Avg
 from django.http import HttpResponseRedirect
+
+# from proj_common.authentication.permissions import JWTBasePermission
+from proj_common.authentication.authentication import JWTAuthentication
 
 def home(request):
     return HttpResponseRedirect('/docs')
@@ -50,16 +53,48 @@ class RatingFilter(FilterSet):
 class FilmList(generics.ListCreateAPIView):
     # The following query allows the fetching of all films, their related films details,
     # and the average rating all in one query.
-    queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
+    # queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
+    queryset = Film.objects.all().annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filter_class = FilmFilter
 
+    def get_permissions(self):
+        if 'HTTP_REFERER' in self.request.META and 'docs' not in self.request.META['HTTP_REFERER']:
+            return [permissions.IsAuthenticated()]
+        if 'HTTP_REFERER' not in self.request.META:
+            return [permissions.IsAuthenticated()]
+        return super().get_permissions()
+
+    def get_authenticators(self):
+        if 'HTTP_REFERER' in self.request.META and 'docs' not in self.request.META['HTTP_REFERER']:
+            return [JWTAuthentication()]
+        if 'HTTP_REFERER' not in self.request.META:
+            return [JWTAuthentication()]
+        return super().get_authenticators()
+
+
 class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
+    # queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
+    queryset = Film.objects.all().annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = FilmFilter
+
+    def get_permissions(self):
+        if 'HTTP_REFERER' in self.request.META and 'docs' not in self.request.META['HTTP_REFERER']:
+            return [permissions.IsAuthenticated()]
+        if 'HTTP_REFERER' not in self.request.META:
+            return [permissions.IsAuthenticated()]
+        return super().get_permissions()
+
+    def get_authenticators(self):
+        if 'HTTP_REFERER' in self.request.META and 'docs' not in self.request.META['HTTP_REFERER']:
+            return [JWTAuthentication()]
+        if 'HTTP_REFERER' not in self.request.META:
+            return [JWTAuthentication()]
+        return super().get_authenticators()
+
 
 class RatingList(generics.ListCreateAPIView):
     queryset = Rating.objects.all()
@@ -67,11 +102,41 @@ class RatingList(generics.ListCreateAPIView):
     filter_backends = (DjangoFilterBackend,)
     filter_class = RatingFilter
 
+    def get_permissions(self):
+        if 'HTTP_REFERER' in self.request.META and 'docs' not in self.request.META['HTTP_REFERER']:
+            return [permissions.IsAuthenticated()]
+        if 'HTTP_REFERER' not in self.request.META:
+            return [permissions.IsAuthenticated()]
+        return super().get_permissions()
+
+    def get_authenticators(self):
+        if 'HTTP_REFERER' in self.request.META and 'docs' not in self.request.META['HTTP_REFERER']:
+            return [JWTAuthentication()]
+        if 'HTTP_REFERER' not in self.request.META:
+            return [JWTAuthentication()]
+        return super().get_authenticators()
+
+
 class RatingDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = RatingFilter
+
+    def get_permissions(self):
+        if 'HTTP_REFERER' in self.request.META and 'docs' not in self.request.META['HTTP_REFERER']:
+            return [permissions.IsAuthenticated()]
+        if 'HTTP_REFERER' not in self.request.META:
+            return [permissions.IsAuthenticated()]
+        return super().get_permissions()
+
+    def get_authenticators(self):
+        if 'HTTP_REFERER' in self.request.META and 'docs' not in self.request.META['HTTP_REFERER']:
+            return [JWTAuthentication()]
+        if 'HTTP_REFERER' not in self.request.META:
+            return [JWTAuthentication()]
+        return super().get_authenticators()
+
 
 class FilmRatingList(mixins.ListModelMixin, generics.GenericAPIView):
     serializer_class = FilmRatingSerializer
@@ -92,3 +157,17 @@ class FilmRatingList(mixins.ListModelMixin, generics.GenericAPIView):
             serializer.save(film_id=kwargs['pk'])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_permissions(self):
+        if 'HTTP_REFERER' in self.request.META and 'docs' not in self.request.META['HTTP_REFERER']:
+            return [permissions.IsAuthenticated()]
+        if 'HTTP_REFERER' not in self.request.META:
+            return [permissions.IsAuthenticated()]
+        return super().get_permissions()
+
+    def get_authenticators(self):
+        if 'HTTP_REFERER' in self.request.META and 'docs' not in self.request.META['HTTP_REFERER']:
+            return [JWTAuthentication()]
+        if 'HTTP_REFERER' not in self.request.META:
+            return [JWTAuthentication()]
+        return super().get_authenticators()

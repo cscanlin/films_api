@@ -21,10 +21,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('FILMS_API_SECRET')
+SECRET_KEY = os.getenv('FILMS_API_SECRET', '0I1rDQ2kHUnP0PbrMlxt')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'films-api.herokuapp.com']
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    os.getenv('ALLOWED_HOST'),
+    'www.{}'.format(os.getenv('ALLOWED_HOST'))
+]
 
 # Application definition
 
@@ -33,15 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages',
+    # 'django.contrib.messages',
     'django.contrib.staticfiles',
     'films_api',
     'rest_framework',
     'crispy_forms',
     'rest_framework_docs',
+    'corsheaders',
+    # 'users',
+    'proj_common.authentication',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -78,16 +86,25 @@ WSGI_APPLICATION = 'films_api.wsgi.application'
 
 
 environment_type = os.getenv('DJANGO_CONFIGURATION', 'dev')
-DATABASES = {}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('RDS_DB_NAME', ''),
+        'USER': os.environ.get('RDS_USERNAME', ''),
+        'PASSWORD': os.environ.get('RDS_PASSWORD', ''),
+        'HOST': os.environ.get('RDS_HOSTNAME', ''),
+        'PORT': os.environ.get('RDS_PORT', ''),
+    },
+}
 if environment_type == 'dev':
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    # DATABASES['default'] = {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
 elif environment_type in ['Prod', 'Stage']:
-    DATABASES['default'] = dj_database_url.config(conn_max_age=500)
+    # DATABASES['default'] = dj_database_url.config(conn_max_age=500)
     DEBUG = False
 
 # Password validation
@@ -158,3 +175,31 @@ LOGGING = {
         },
     }
 }
+
+##################################################################
+# CORS HEADERS configs
+##################################################################
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+##################################################################
+# CACHE settings
+##################################################################
+CACHE_HOST = os.environ.get('CACHE_HOST', 'redis')
+SESSIONS_CACHE_HOST = os.environ.get('SESSIONS_CACHE_HOST', 'redis')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'user_api_cache_table'
+    },
+    'session': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'user_api_cache_table'
+    }
+}
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_CACHE_ALIAS = 'session'
+
+AUTH_USER_MODEL = "authentication.User"
+# AUTH_USER_MODEL = 'users.User'
