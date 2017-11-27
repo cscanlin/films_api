@@ -199,3 +199,4 @@ CACHES = {
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 SESSION_CACHE_ALIAS = 'session'
 
+AUTH_USER_MODEL = 'films_api.User'
