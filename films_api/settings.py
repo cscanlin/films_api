@@ -180,5 +180,22 @@ LOGGING = {
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+##################################################################
+# CACHE settings
+##################################################################
+CACHE_HOST = os.environ.get('CACHE_HOST', 'redis')
+SESSIONS_CACHE_HOST = os.environ.get('SESSIONS_CACHE_HOST', 'redis')
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'user_api_cache_table'
+    },
+    'session': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'user_api_cache_table'
+    }
+}
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_CACHE_ALIAS = 'session'
 
