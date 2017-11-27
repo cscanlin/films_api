@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'rest_framework_docs',
     'corsheaders',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -199,4 +200,4 @@ CACHES = {
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 SESSION_CACHE_ALIAS = 'session'
 
-# AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.User'
