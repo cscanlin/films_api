@@ -16,7 +16,7 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
             self.fields.pop(field_name)
 
 class FilmSerializer(DynamicFieldsModelSerializer):
-    # appropiately serialize average_score; see comment in api_controller on `FilmList`
+    # appropiately serialize average_score; see comment in views on `FilmList`
     average_score = serializers.IntegerField(read_only=True)
 
     class Meta:

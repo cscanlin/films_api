@@ -27,7 +27,7 @@ The API logic is split among 4 main parts:
 
 2. `serializers.py` - Controls which fields should be pulled from each model, including logic with dynamic fields. Also handles any nesting functionality.
 
-3. `api_controller.py` - Contains classes which dispatch and execute all CRUD logic. Also handles all of the filtering logic.
+3. `views.py` - Contains classes which dispatch and execute all CRUD logic. Also handles all of the filtering logic.
 
 4. `urls.py` - Defines the routes and connects matching view/controller functionality.
 
