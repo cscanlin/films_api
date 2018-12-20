@@ -1,30 +1,25 @@
-from .models import Film, Rating
-from .serializers import RootFilmSerializer, RatingSerializer, FilmRatingSerializer
+from django.db.models import Avg
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import generics, mixins, filters, status
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend, FilterSet
-from django.db.models import Avg
+
+from .models import Film, Rating
+from .serializers import RootFilmSerializer, RatingSerializer, FilmRatingSerializer
+from .utils import dynamic_field_filters
 
 def home(request):
     return None
 
 class FilmFilter(FilterSet):
-
     class Meta:
         model = Film
-        fields = {
-            'year': ['lte', 'gte'],
-            'title': ['icontains'],
-            'description': ['icontains'],
-        }
+        fields = dynamic_field_filters(model)
 
 class RatingFilter(FilterSet):
 
     class Meta:
         model = Rating
-        fields = {
-            'score': ['lte', 'gte'],
-        }
+        fields = dynamic_field_filters(model)
 
 # These classes contain the bulk of the logic and are the most common place for customization
 # Each class inherits from either a `ListCreateAPIView` class for general endpoints,
@@ -36,13 +31,15 @@ class RatingFilter(FilterSet):
 class FilmList(generics.ListCreateAPIView):
     # The following query allows the fetching of all films, their related films details,
     # and the average rating all in one query.
-    queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
+    queryset = Film.objects.all().prefetch_related('related_films')\
+                                 .annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filter_class = FilmFilter
 
 class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Film.objects.all().prefetch_related('related_films').annotate(average_score=Avg('ratings__score'))
+    queryset = Film.objects.all().prefetch_related('related_films')\
+                                 .annotate(average_score=Avg('ratings__score'))
     serializer_class = RootFilmSerializer
     filter_class = FilmFilter
 

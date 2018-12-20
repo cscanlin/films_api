@@ -23,7 +23,7 @@ class FilmSerializer(DynamicFieldsModelSerializer):
         model = Film
         fields = '__all__'
 
-class RatingSerializer(serializers.ModelSerializer):
+class RatingSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Rating
