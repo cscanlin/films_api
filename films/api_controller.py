@@ -4,13 +4,9 @@ from rest_framework import generics, mixins, filters, status
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from django.db.models import Avg
-from django.http import HttpResponseRedirect
 
 def home(request):
     return None
-    return HttpResponseRedirect('/docs')
-
-# The filters are practically self-documenting!
 
 class FilmFilter(FilterSet):
 
