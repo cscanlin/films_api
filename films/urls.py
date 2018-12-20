@@ -14,7 +14,6 @@ urlpatterns = [
     path('films/<str:film_id>/ratings/<int:pk>', views.RatingDetail.as_view()),
     path('ratings/', views.RatingList.as_view()),
     path('ratings/<int:pk>/', views.RatingDetail.as_view()),
-    # path('admin/', admin.site.urls),
     # path('docs/', include('rest_framework_docs.urls')),  # django_rest_framework_redocs
     path('', views.home, name='home'),
 ]  # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -36,9 +36,9 @@ class FilmTests(APITestCase):
         film1 = Film.objects.create(title='listed film 2')
         response = client.get('/films/', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['count'], 2)
-        self.assertEqual(response.data['results'][0]['title'], film0.title)
-        self.assertEqual(response.data['results'][1]['title'], film1.title)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['title'], film0.title)
+        self.assertEqual(response.data[1]['title'], film1.title)
 
     def test_film_average_score(self):
         film = Film.objects.create(title='ranked film')
@@ -73,12 +73,11 @@ class RatingTests(APITestCase):
         Rating.objects.create(film=self.film, score=6)
         response = client.get('/ratings/', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['count'], 2)
-        results = response.data['results']
-        self.assertEqual(results[0]['film'], self.film.id)
-        self.assertEqual(results[0]['score'], 4)
-        self.assertEqual(results[1]['film'], self.film.id)
-        self.assertEqual(results[1]['score'], 6)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['film'], self.film.id)
+        self.assertEqual(response.data[0]['score'], 4)
+        self.assertEqual(response.data[1]['film'], self.film.id)
+        self.assertEqual(response.data[1]['score'], 6)
 
     def test_list_film_ratings(self):
         client = APIClient()
@@ -88,6 +87,5 @@ class RatingTests(APITestCase):
         response = client.get(api_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Film.objects.get().ratings.count(), 2)
-        results = response.data['results']
-        self.assertEqual(results[0]['score'], 4)
-        self.assertEqual(results[1]['score'], 6)
+        self.assertEqual(response.data[0]['score'], 4)
+        self.assertEqual(response.data[1]['score'], 6)
