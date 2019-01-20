@@ -95,11 +95,11 @@ class App extends React.Component {
     let params = {'page': state.page + 1}
 
     if (state.sorted.length) {
-      const sorting = state.sorted[0]
-      const sortParams = {'ordering': (sorting.desc ? '-' : '') + sorting.id}
-      params = {...params, ...sortParams}
+      const orderingString = state.sorted.map(orderItem => (
+        (orderItem.desc ? '-' : '') + orderItem.id
+      )).join(',')
+      params = {...params, ...{'ordering': orderingString}}
     }
-    console.log(state.filtered)
 
     const filterParams = state.filtered.reduce((filterParams, filterEntry) => (
       { ...filterParams, [`${filterEntry.id}__${filterEntry.value.filterType}`]: filterEntry.value.filterValue }), {}
