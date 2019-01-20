@@ -15,6 +15,7 @@ class FilmSerializer(DynamicFieldsModelSerializer):
         fields = '__all__'
 
 class RatingSerializer(DynamicFieldsModelSerializer):
+    film = FilmSerializer(read_only=True, required=False)
 
     class Meta:
         model = Rating

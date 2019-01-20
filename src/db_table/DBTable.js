@@ -60,7 +60,10 @@ class DBTable extends React.Component {
         const fieldData = metadata.fields[fieldName]
         const column = {
           Header: fieldData['label'],
-          accessor: fieldName,
+          id: fieldName,
+          accessor: fieldData.display_accessor
+                    ? f => f[fieldName][fieldData.display_accessor]
+                    : fieldName,
         }
         if (fieldData.child) {
           column.Cell = (row) => (

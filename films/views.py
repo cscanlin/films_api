@@ -46,6 +46,7 @@ class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
 class RatingList(generics.ListCreateAPIView):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filter_class = RatingFilter
 
 class RatingDetail(generics.RetrieveUpdateDestroyAPIView):

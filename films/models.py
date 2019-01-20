@@ -53,3 +53,9 @@ class Rating(models.Model):
         MinValueValidator(0),
         MaxValueValidator(10),
     ])
+
+    @classmethod
+    def relations_diplay_fields(cls):
+        return {
+            'film': 'title',
+        }
