@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactTable from 'react-table'
+import ReactTable, { ReactTableDefaults } from 'react-table'
 import 'react-table/react-table.css'
 
 import './App.css'
@@ -70,6 +70,10 @@ class App extends React.Component {
     return (
       <div>
         <ReactTable
+          column={{
+            ...ReactTableDefaults.column,
+            style: {whiteSpace: 'normal'},
+          }}
           columns={[
             {
               Header: 'average_score',
