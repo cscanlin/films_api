@@ -22,4 +22,3 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('films.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-print(settings.STATIC_URL, settings.STATIC_ROOT)
