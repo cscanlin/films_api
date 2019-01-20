@@ -38,3 +38,4 @@ class FilmRatingSerializer(serializers.ModelSerializer):
 class RootFilmSerializer(FilmSerializer):
     # serializes each rating with redundant data removed
     ratings = FilmRatingSerializer(read_only=True, many=True, required=False)
+    related_films = FilmSerializer(read_only=True, many=True, required=False)

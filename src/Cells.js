@@ -24,12 +24,12 @@ class ArrayCell extends React.Component {
   render() {
     const dropdownArrow = this.state.expanded ? '\u25BC' : '\u25C0'
     const dropdownStyle = {
-      display: this.fieldData().length ? 'inline-block' : 'none',
+      display: this.fieldData().length && this.props.expandable ? 'inline-block' : 'none',
       float: 'right',
       cursor: 'default',
     }
     const itemContainerStyle = {
-      display: this.state.expanded ? 'inline-block' : 'none',
+      display: this.state.expanded || !this.props.expandable ? 'inline-block' : 'none',
       pointerEvents: 'none',
     }
     return (

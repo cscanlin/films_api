@@ -87,13 +87,25 @@ class App extends React.Component {
               Header: 'ratings',
               id: 'ratings',
               Cell: (row) => (
-                <ArrayCell row={row} fieldName='ratings'/>
+                <ArrayCell
+                  row={row}
+                  fieldName='ratings'
+                  expandable={true}
+                  renderArrayItem={(arrayItem) => <p>{arrayItem.score}</p>}
+                />
               ),
             },
             {
               Header: 'related_films',
               id: 'related_films',
-              accessor: d => JSON.stringify(d.related_films),
+              Cell: (row) => (
+                <ArrayCell
+                  row={row}
+                  fieldName='related_films'
+                  expandable={true}
+                  renderArrayItem={(arrayItem) => <p>{arrayItem.title}</p>}
+                />
+              ),
             },
             {
               Header: 'title',
