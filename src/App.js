@@ -4,6 +4,7 @@ import 'react-table/react-table.css'
 
 import './App.css'
 import { ArrayCell } from './Cells.js'
+import { DynamicFilter } from './Filters.js'
 
 const requestData = (urlString, params, pageSize, page, sorted, filtered) => {
   const url = new URL(urlString, window.location.href)
@@ -71,6 +72,15 @@ class App extends React.Component {
             />
           )
         }
+        if (fieldData.filters) {
+          column.Filter = ({ filter, onChange }) => (
+            <DynamicFilter
+              availableFilters={fieldData.filters}
+              filter={filter}
+              onChange={onChange}
+            />
+          )
+        }
         return column
       })
     }
@@ -89,8 +99,10 @@ class App extends React.Component {
       const sortParams = {'ordering': (sorting.desc ? '-' : '') + sorting.id}
       params = {...params, ...sortParams}
     }
+    console.log(state.filtered)
+
     const filterParams = state.filtered.reduce((filterParams, filterEntry) => (
-      { ...filterParams, [`${filterEntry.id}__icontains`]: filterEntry.value }), {}
+      { ...filterParams, [`${filterEntry.id}__${filterEntry.value.filterType}`]: filterEntry.value.filterValue }), {}
     )
     params = {...params, ...filterParams}
 
