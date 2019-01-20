@@ -61,7 +61,6 @@ class DynamicFilter extends React.Component {
   }
 
   render() {
-    console.log(this.props.filter)
     return (
       <div className="filter">
         {this.filterSelect()}
@@ -78,7 +77,6 @@ class DynamicFilter extends React.Component {
 
 DynamicFilter.propTypes = {
   availableFilters: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // filter: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
 }
 
