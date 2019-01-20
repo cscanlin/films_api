@@ -130,15 +130,15 @@ class App extends React.Component {
           column={{
             ...ReactTableDefaults.column,
             style: {whiteSpace: 'normal'},
-          }}
+          }} // FIXME
           columns={this.getColumns(metadata)}
           manual // Forces table not to paginate or sort automatically, so we can handle it server-side
           data={data}
           pages={pages} // Display the total number of pages
           loading={loading} // Display the loading overlay when we need it
           onFetchData={this.fetchData} // Request new data when things change
-          filterable
-          defaultPageSize={10}
+          filterable // FIXME
+          defaultPageSize={10} // FIXME
           className='-striped -highlight'
         />
       </div>
