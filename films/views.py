@@ -4,9 +4,10 @@ from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import generics, mixins, filters, status
 from rest_framework.response import Response
 
+from db_table.utils import dynamic_field_filters
+
 from .models import Film, Rating
 from .serializers import RootFilmSerializer, RatingSerializer, FilmRatingSerializer
-from .utils import dynamic_field_filters
 
 def home(request):
     return render(request, 'index.html')
