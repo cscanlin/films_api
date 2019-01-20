@@ -1,4 +1,5 @@
 from django.db.models import Avg
+from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import generics, mixins, filters, status
 from rest_framework.response import Response
@@ -8,7 +9,7 @@ from .serializers import RootFilmSerializer, RatingSerializer, FilmRatingSeriali
 from .utils import dynamic_field_filters
 
 def home(request):
-    return None
+    return render(request, 'index.html')
 
 class FilmFilter(FilterSet):
     class Meta:
