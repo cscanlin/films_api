@@ -92,19 +92,18 @@ class App extends React.Component {
     // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
     this.setState({ loading: true })
 
-    let params = {'page': state.page + 1}
+    const params = state.filtered.reduce((filterParams, filterEntry) => (
+      { ...filterParams, [`${filterEntry.id}__${filterEntry.value.filterType}`]: filterEntry.value.filterValue }), {}
+    )
 
     if (state.sorted.length) {
       const orderingString = state.sorted.map(orderItem => (
         (orderItem.desc ? '-' : '') + orderItem.id
       )).join(',')
-      params = {...params, ...{'ordering': orderingString}}
+      params.ordering = orderingString
     }
 
-    const filterParams = state.filtered.reduce((filterParams, filterEntry) => (
-      { ...filterParams, [`${filterEntry.id}__${filterEntry.value.filterType}`]: filterEntry.value.filterValue }), {}
-    )
-    params = {...params, ...filterParams}
+    params.page = state.page + 1
 
     requestData(
       this.state.url,
