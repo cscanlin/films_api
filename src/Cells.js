@@ -53,7 +53,7 @@ ArrayCell.propTypes = {
 }
 
 ArrayCell.defaultProps = {
-  expandable: false,
+  expandable: true,
   renderArrayItem: (arrayItem) => <p>{JSON.stringify(arrayItem)}</p>,
 }
 

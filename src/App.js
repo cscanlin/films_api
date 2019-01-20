@@ -27,18 +27,63 @@ class App extends React.Component {
   constructor() {
     super()
     this.state = {
+      url: '/films/',
+      metadata: {},
       data: [],
       pages: null,
       loading: true
     }
+    this.loadMetadata = this.loadMetadata.bind(this)
     this.fetchData = this.fetchData.bind(this)
   }
+
+  componentDidMount() {
+    this.loadMetadata()
+  }
+
+  loadMetadata() {
+    return fetch(this.state.url, {method: 'OPTIONS'})
+      .then((response) => {
+          if (response.status >= 400) {
+              throw new Error("Bad response from server")
+          }
+          return response.json()
+      }).then(response => {
+        this.setState({ metadata: response })
+      })
+  }
+
+  getColumns(metadata) {
+    let columns = []
+    if (Object.keys(metadata).length) {
+      columns = metadata.ordered_fields.map((fieldName) => {
+        const fieldData = metadata.fields[fieldName]
+        const column = {
+          Header: fieldData['label'],
+          accessor: fieldName,
+        }
+        if (fieldData.child) {
+          column.Cell = (row) => (
+            <ArrayCell
+              row={row}
+              fieldName={fieldName}
+              renderArrayItem={(arrayItem) => <p>{arrayItem[fieldData.display_accessor]}</p>}
+            />
+          )
+        }
+        return column
+      })
+    }
+    return columns
+  }
+
   fetchData(state, instance) {
     // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
     // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
     this.setState({ loading: true })
 
     let params = {'page': state.page + 1}
+
     if (state.sorted.length) {
       const sorting = state.sorted[0]
       const sortParams = {'ordering': (sorting.desc ? '-' : '') + sorting.id}
@@ -50,7 +95,7 @@ class App extends React.Component {
     params = {...params, ...filterParams}
 
     requestData(
-      '/films/',
+      this.state.url,
       params,
       state.pageSize,
       state.page,
@@ -65,8 +110,9 @@ class App extends React.Component {
       })
     })
   }
+
   render() {
-    const { data, pages, loading } = this.state
+    const { metadata, data, pages, loading } = this.state
     return (
       <div>
         <ReactTable
@@ -74,56 +120,7 @@ class App extends React.Component {
             ...ReactTableDefaults.column,
             style: {whiteSpace: 'normal'},
           }}
-          columns={[
-            {
-              Header: 'average_score',
-              accessor: 'average_score',
-            },
-            {
-              Header: 'description',
-              accessor: 'description',
-            },
-            {
-              Header: 'id',
-              accessor: 'id',
-            },
-            {
-              Header: 'ratings',
-              id: 'ratings',
-              Cell: (row) => (
-                <ArrayCell
-                  row={row}
-                  fieldName='ratings'
-                  expandable={true}
-                  renderArrayItem={(arrayItem) => <p>{arrayItem.score}</p>}
-                />
-              ),
-            },
-            {
-              Header: 'related_films',
-              id: 'related_films',
-              Cell: (row) => (
-                <ArrayCell
-                  row={row}
-                  fieldName='related_films'
-                  expandable={true}
-                  renderArrayItem={(arrayItem) => <p>{arrayItem.title}</p>}
-                />
-              ),
-            },
-            {
-              Header: 'title',
-              accessor: 'title',
-            },
-            {
-              Header: 'url_slug',
-              accessor: 'url_slug',
-            },
-            {
-              Header: 'year',
-              accessor: 'year',
-            },
-          ]}
+          columns={this.getColumns(metadata)}
           manual // Forces table not to paginate or sort automatically, so we can handle it server-side
           data={data}
           pages={pages} // Display the total number of pages

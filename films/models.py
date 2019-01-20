@@ -8,6 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Film(models.Model):
+
     title = models.CharField(max_length=255, null=True, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     url_slug = models.CharField(max_length=255, null=True, blank=True)
@@ -18,6 +19,13 @@ class Film(models.Model):
 
     def __str__(self):
         return self.title
+
+    @classmethod
+    def relations_diplay_fields(cls):
+        return {
+            'ratings': 'score',
+            'related_films': 'title',
+        }
 
     @classmethod
     def load_from_file(cls, filename=os.path.join(settings.BASE_DIR, 'films.json')):

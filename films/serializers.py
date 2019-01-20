@@ -29,13 +29,12 @@ class RatingSerializer(DynamicFieldsModelSerializer):
         model = Rating
         fields = '__all__'
 
-class FilmRatingSerializer(serializers.ModelSerializer):
+class FilmRatingSerializer(DynamicFieldsModelSerializer):
     # An extra serializer used for the `films/id/ratings/` route to exclude redundant data
     class Meta:
         model = Rating
         exclude = ('film',)
 
 class RootFilmSerializer(FilmSerializer):
-    # serializes each rating with redundant data removed
     ratings = FilmRatingSerializer(read_only=True, many=True, required=False)
     related_films = FilmSerializer(read_only=True, many=True, required=False)
