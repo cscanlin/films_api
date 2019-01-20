@@ -3,6 +3,7 @@ import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 
 import './App.css'
+import { ArrayCell } from './Cells.js'
 
 const requestData = (urlString, params, pageSize, page, sorted, filtered) => {
   const url = new URL(urlString, window.location.href)
@@ -47,10 +48,9 @@ class App extends React.Component {
       { ...filterParams, [`${filterEntry.id}__icontains`]: filterEntry.value }), {}
     )
     params = {...params, ...filterParams}
-    console.log(params);
 
     requestData(
-      '/films',
+      '/films/',
       params,
       state.pageSize,
       state.page,
@@ -73,37 +73,39 @@ class App extends React.Component {
           columns={[
             {
               Header: 'average_score',
-              accessor: 'average_score'
+              accessor: 'average_score',
             },
             {
               Header: 'description',
-              accessor: 'description'
+              accessor: 'description',
             },
             {
               Header: 'id',
-              accessor: 'id'
+              accessor: 'id',
             },
             {
               Header: 'ratings',
               id: 'ratings',
-              accessor: d => JSON.stringify(d.ratings)
+              Cell: (row) => (
+                <ArrayCell row={row} fieldName='ratings'/>
+              ),
             },
             {
               Header: 'related_films',
               id: 'related_films',
-              accessor: d => JSON.stringify(d.related_films)
+              accessor: d => JSON.stringify(d.related_films),
             },
             {
               Header: 'title',
-              accessor: 'title'
+              accessor: 'title',
             },
             {
               Header: 'url_slug',
-              accessor: 'url_slug'
+              accessor: 'url_slug',
             },
             {
               Header: 'year',
-              accessor: 'year'
+              accessor: 'year',
             },
           ]}
           manual // Forces table not to paginate or sort automatically, so we can handle it server-side
