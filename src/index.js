@@ -3,4 +3,5 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const APIURL = window.location.pathname.replace('/db_table', '')
+ReactDOM.render(<App url={APIURL}/>, document.getElementById('root'));

@@ -9,7 +9,7 @@ from db_table.utils import dynamic_field_filters
 from .models import Film, Rating
 from .serializers import RootFilmSerializer, RatingSerializer, FilmRatingSerializer
 
-def home(request):
+def db_table(request):
     return render(request, 'index.html')
 
 class FilmFilter(FilterSet):

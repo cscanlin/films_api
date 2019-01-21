@@ -7,7 +7,7 @@ import DBTable from './db_table/DBTable.js'
 class App extends React.Component {
 
   render() {
-    return <DBTable url='/films/'/>
+    return <DBTable url={this.props.url}/>
   }
 }
 
