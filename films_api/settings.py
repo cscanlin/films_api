@@ -40,15 +40,28 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'django_filters',
+    'auto_drf',
     'db_table',
     'films',
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',
+                                'rest_framework.filters.OrderingFilter'),
     'DEFAULT_METADATA_CLASS': 'db_table.metadata.FilterMetadata',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
+}
+
+AUTO_DRF = {
+    'API_ROOT_PATH': 'api/',
+    'MODELS': {
+        'films': [
+            'Film',
+            'Rating',
+        ],
+    },
+    'SERIALIZE_NESTED_LEVEL': 1,
 }
 
 MIDDLEWARE = [

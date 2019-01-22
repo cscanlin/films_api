@@ -63,14 +63,17 @@ class DBTable extends React.Component {
           id: fieldName,
           accessor: fieldData.display_accessor
                     ? f => f[fieldName][fieldData.display_accessor]
-                    : fieldName,
+                    : f => JSON.stringify(f[fieldName]),
         }
         if (fieldData.child) {
+          const renderArrayItem = fieldData.display_accessor
+            ? (arrayItem) => <p>{arrayItem[fieldData.display_accessor]}</p>
+            : undefined
           column.Cell = (row) => (
             <ArrayCell
               row={row}
               fieldName={fieldName}
-              renderArrayItem={(arrayItem) => <p>{arrayItem[fieldData.display_accessor]}</p>}
+              renderArrayItem={renderArrayItem}
             />
           )
         }

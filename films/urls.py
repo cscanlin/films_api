@@ -7,14 +7,15 @@ from . import views
 
 urlpatterns = [
     path('films/', views.FilmList.as_view()),
-    path('db_table/films/', views.db_table, name='films_table'),
     path('films/<int:pk>/', views.FilmDetail.as_view()),
     path('films/<slug:url_slug>/', views.FilmDetail.as_view(lookup_field='url_slug')),
     path('films/<int:pk>/ratings/', views.FilmRatingList.as_view()),
     path('films/<str:url_slug>/ratings/', views.FilmRatingList.as_view(lookup_field='url_slug')),
     path('films/<str:film_id>/ratings/<int:pk>', views.RatingDetail.as_view()),
     path('ratings/', views.RatingList.as_view()),
-    path('db_table/ratings/', views.db_table, name='ratings_table'),
     path('ratings/<int:pk>/', views.RatingDetail.as_view()),
+
+    path('db_table/api/films/', views.db_table, name='films_table'),
+    path('db_table/api/ratings/', views.db_table, name='ratings_table'),
     # path('docs/', include('rest_framework_docs.urls')),  # django_rest_framework_redocs
 ]

@@ -8,7 +8,7 @@ from .models import Film, Rating
 
 class FilmSerializer(DynamicFieldsModelSerializer):
     # appropiately serialize average_score; see comment in views on `FilmList`
-    average_score = serializers.IntegerField(read_only=True)
+    average_score = serializers.IntegerField(read_only=True, required=False)
 
     class Meta:
         model = Film
@@ -25,7 +25,7 @@ class FilmRatingSerializer(DynamicFieldsModelSerializer):
     # An extra serializer used for the `films/id/ratings/` route to exclude redundant data
     class Meta:
         model = Rating
-        exclude = ('film',)
+        fields = '__all__'
 
 class RootFilmSerializer(FilmSerializer):
     ratings = FilmRatingSerializer(read_only=True, many=True, required=False)

@@ -21,4 +21,5 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('films.urls')),
+    path(settings.AUTO_DRF['API_ROOT_PATH'], include('auto_drf.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
