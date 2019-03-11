@@ -27,7 +27,6 @@ class DBTable extends React.Component {
   constructor() {
     super()
     this.state = {
-      url: '/films/',
       metadata: {},
       data: [],
       pages: null,

@@ -1,5 +1,7 @@
 from rest_framework.metadata import SimpleMetadata
 
+from .utils import all_table_fields
+
 class FilterMetadata(SimpleMetadata):
     """
     Don't include field and other information for `OPTIONS` requests.
@@ -12,11 +14,7 @@ class FilterMetadata(SimpleMetadata):
         model = view.filter_class.Meta.model
 
         # set field order with related fields last
-        fields_w_relationships = [field.name for field in model._meta.get_fields()]
-        db_fields = [field.name for field in model._meta.fields]
-        db_fields += [rel_field for rel_field in fields_w_relationships
-                      if rel_field not in db_fields]
-        metadata['ordered_fields'] = db_fields
+        metadata['ordered_fields'] = all_table_fields(model)
 
         metadata['fields'] = dict(list(metadata['actions'].values()).pop())
 
