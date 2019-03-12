@@ -20,12 +20,12 @@ class Film(models.Model):
     def __str__(self):
         return self.title
 
-    # @classmethod
-    # def relations_diplay_fields(cls):
-    #     return {
-    #         'ratings': 'score',
-    #         'related_films': 'title',
-    #     }
+    @classmethod
+    def relations_diplay_fields(cls):
+        return {
+            'ratings': 'score',
+            'related_films': 'title',
+        }
 
     @classmethod
     def load_from_file(cls, filename=os.path.join(settings.BASE_DIR, 'films.json')):
@@ -54,8 +54,11 @@ class Rating(models.Model):
         MaxValueValidator(10),
     ])
 
-    # @classmethod
-    # def relations_diplay_fields(cls):
-    #     return {
-    #         'film': 'title',
-    #     }
+    def __str__(self):
+        return str(self.score)
+
+    @classmethod
+    def relations_diplay_fields(cls):
+        return {
+            'film': 'title',
+        }

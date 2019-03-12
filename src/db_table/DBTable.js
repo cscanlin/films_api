@@ -61,7 +61,7 @@ class DBTable extends React.Component {
           Header: fieldData['label'],
           id: fieldName,
           accessor: fieldData.display_accessor
-                    ? f => f[fieldName][fieldData.display_accessor]
+                    ? f => f[fieldName][fieldData.display_accessor] || JSON.stringify(f[fieldName])
                     : f => JSON.stringify(f[fieldName]),
         }
         if (fieldData.child) {
