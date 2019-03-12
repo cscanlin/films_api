@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.conf import settings
 from django.db.models.fields.related import RelatedField, ManyToManyField
-from django.db.models.fields.reverse_related import ForeignObjectRel
+from django.db.models.fields.reverse_related import ForeignObjectRel, ManyToOneRel, ManyToManyRel
 from rest_framework import serializers
 
 from .utils import all_table_fields
@@ -23,24 +23,31 @@ def add_nested_serializers(auto_serializers):
     if nesting_level == 0:
         return auto_serializers
 
-    nested_serializers = {}
+    base_serializers = {serializer_name + 'Base': type(
+        serializer_name + 'Base',
+        serializer_class.__bases__,
+        dict(serializer_class.__dict__),
+    ) for serializer_name, serializer_class in auto_serializers.items()}
     for serializer_name, serializer_class in auto_serializers.items():
         serializer_model = serializer_class.Meta.model
         relationship_fields = {field for field in serializer_model._meta.get_fields()
                                if isinstance(field, (RelatedField, ForeignObjectRel))}
         for field in relationship_fields:
-            relationship_serializer_name = field.model._meta.object_name + 'Serializer'
-            relationship_root_serializer = auto_serializers.get(relationship_serializer_name)
+            relationship_serializer_name = field.related_model._meta.object_name + 'Serializer'
+            relationship_base_serializer = base_serializers.get(relationship_serializer_name + 'Base')
             nested_serializer = type(
-                relationship_serializer_name + 'Level_1',
-                relationship_root_serializer.__bases__,
-                dict(relationship_root_serializer.__dict__),
+                relationship_serializer_name + serializer_model.__name__ + 'Level_1',
+                relationship_base_serializer.__bases__,
+                dict(relationship_base_serializer.__dict__),
             )
-            setattr(relationship_root_serializer, field.name,
-                    nested_serializer(many=isinstance(field, ManyToManyField)))
-            nested_serializers[nested_serializer.__name__] = nested_serializer
-            nested_serializers[relationship_serializer_name] = relationship_root_serializer
-    return nested_serializers
+            setattr(serializer_class, field.name,
+                    nested_serializer(many=isinstance(field, (ManyToManyField, ManyToOneRel, ManyToManyRel)),
+                                      required=False, read_only=True))
+        serializer_class._declared_fields = serializer_class._get_declared_fields(
+            serializer_class.__bases__,
+            dict(serializer_class.__dict__),
+        )
+    return auto_serializers
 
 def generate_auto_serializers():
     # load auto_models from AUTO_DRF['MODELS']
@@ -62,7 +69,7 @@ def generate_auto_serializers():
                                 {'Meta': Meta})
         auto_serializers[serializer_name] = serializer_class
 
-    auto_serializers.update(add_nested_serializers(auto_serializers))
+    add_nested_serializers(auto_serializers)
     return auto_serializers
 
 
