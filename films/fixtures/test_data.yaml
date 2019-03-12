@@ -1,0 +1,103 @@
+- model: films.film
+  pk: 1
+  fields:
+    title: A Wonderful Film
+    description: A cute film about lots of wonderful stuff.
+    url_slug: a_wonderful_film
+    year: 1973
+    related_films: [2, 4, 7, 11]
+- model: films.film
+  pk: 2
+  fields:
+    title: All About Endor
+    description: Documentary telling the tail of Endor.
+    url_slug: all_about_fandor
+    year: 2001
+    related_films: [1, 4, 7]
+- model: films.film
+  pk: 3
+  fields:
+    title: Dancing with Elephants
+    description: The classic tale of Dancing with Wolves, but with elephants!
+    url_slug: dancing_with_elephants
+    year: 2016
+    related_films: []
+- model: films.film
+  pk: 4
+  fields:
+    title: The Story of George
+    description: A true story outlining the adventures of George
+    url_slug: the_story_of_george
+    year: 1974
+    related_films: [1, 2, 7]
+- model: films.film
+  pk: 5
+  fields:
+    title: Zee and Bee Go Skiiing
+    description: The tragic story of Zee and Bee on their snowy adventures.
+    url_slug: zee_and_bee_go_skiing
+    year: 1991
+    related_films: [6, 8, 9, 10]
+- model: films.film
+  pk: 6
+  fields:
+    title: Ahead of Its Time
+    description: A story about the future.
+    url_slug: ahead_of_its_time
+    year: 2088
+    related_films: [5, 8, 9, 10]
+- model: films.film
+  pk: 7
+  fields:
+    title: My Name is Jerry
+    description: The life of the cat named Jerry.
+    url_slug: my_name_is_jerry
+    year: 1989
+    related_films: [1, 2, 4]
+- model: films.film
+  pk: 8
+  fields:
+    title: Gems and Trestle
+    description: Is it about web development? Mining history? You'll never know.
+    url_slug: gems_and_trestle
+    year: 2011
+    related_films: [5, 6, 9, 10]
+- model: films.film
+  pk: 9
+  fields:
+    title: How To React Natively
+    description: A step by step journey through developing a React Native application.
+    url_slug: how_to_react_natively
+    year: 2000
+    related_films: [5, 6, 8, 10, 11]
+- model: films.film
+  pk: 10
+  fields:
+    title: 'Perry Hotter: A Lizard''s Tale'
+    description: It's a story all about a lizard named Perry.
+    url_slug: perry_hotter_a_lizards_tale
+    year: 2017
+    related_films: [5, 6, 8, 9]
+- model: films.film
+  pk: 11
+  fields:
+    title: A New File
+    description: A story about star wars & treks
+    url_slug: a_new_film
+    year: 2019
+    related_films: [1, 9]
+- model: films.rating
+  pk: 1
+  fields: {film: 1, score: 8}
+- model: films.rating
+  pk: 2
+  fields: {film: 1, score: 6}
+- model: films.rating
+  pk: 3
+  fields: {film: 11, score: 10}
+- model: films.rating
+  pk: 4
+  fields: {film: 11, score: 9}
+- model: films.rating
+  pk: 5
+  fields: {film: 11, score: 7}

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'django_filters',
+    'rest_framework_filters',
     'auto_drf',
     'db_table',
     'films',

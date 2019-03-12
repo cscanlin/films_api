@@ -6,6 +6,7 @@ See it live: https://films-api.herokuapp.com/
     cd films_api
     pip install -r requirements.txt
     python manage.py migrate
+    python manage.py loaddata test_data
 
 You will also need to set an environment variable for `FILMS_API_SECRET`
 
