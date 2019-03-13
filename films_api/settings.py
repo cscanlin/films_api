@@ -58,13 +58,15 @@ AUTO_DRF = {
     'API_ROOT_PATH': 'api/',
     'MODELS': {
         'films': [
+            'Director',
             'Film',
             'Rating',
         ],
     },
     'ROUTES': [
-        ('films.Film', 'films.Rating'),
+        ('films.Film', ),
         ('films.Rating', ),
+        ('films.Film', 'films.Rating'),
     ],
 }
 

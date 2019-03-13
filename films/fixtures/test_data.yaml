@@ -1,3 +1,19 @@
+- model: films.director
+  pk: 1
+  fields:
+    name: Steve
+- model: films.director
+  pk: 2
+  fields:
+    name: Bob
+- model: films.director
+  pk: 3
+  fields:
+    name: Jim
+- model: films.director
+  pk: 4
+  fields:
+    name: Sarah
 - model: films.film
   pk: 1
   fields:
@@ -5,14 +21,16 @@
     description: A cute film about lots of wonderful stuff.
     url_slug: a_wonderful_film
     year: 1973
+    director: 1
     related_films: [2, 4, 7, 11]
 - model: films.film
   pk: 2
   fields:
     title: All About Endor
     description: Documentary telling the tail of Endor.
-    url_slug: all_about_fandor
+    url_slug: all_about_endor
     year: 2001
+    director: 1
     related_films: [1, 4, 7]
 - model: films.film
   pk: 3
@@ -21,6 +39,7 @@
     description: The classic tale of Dancing with Wolves, but with elephants!
     url_slug: dancing_with_elephants
     year: 2016
+    director: 2
     related_films: []
 - model: films.film
   pk: 4
@@ -29,6 +48,7 @@
     description: A true story outlining the adventures of George
     url_slug: the_story_of_george
     year: 1974
+    director: 3
     related_films: [1, 2, 7]
 - model: films.film
   pk: 5
@@ -37,6 +57,7 @@
     description: The tragic story of Zee and Bee on their snowy adventures.
     url_slug: zee_and_bee_go_skiing
     year: 1991
+    director: 2
     related_films: [6, 8, 9, 10]
 - model: films.film
   pk: 6
@@ -45,6 +66,7 @@
     description: A story about the future.
     url_slug: ahead_of_its_time
     year: 2088
+    director: 4
     related_films: [5, 8, 9, 10]
 - model: films.film
   pk: 7
@@ -53,6 +75,7 @@
     description: The life of the cat named Jerry.
     url_slug: my_name_is_jerry
     year: 1989
+    director: 3
     related_films: [1, 2, 4]
 - model: films.film
   pk: 8
@@ -61,6 +84,7 @@
     description: Is it about web development? Mining history? You'll never know.
     url_slug: gems_and_trestle
     year: 2011
+    director: 4
     related_films: [5, 6, 9, 10]
 - model: films.film
   pk: 9
@@ -69,6 +93,7 @@
     description: A step by step journey through developing a React Native application.
     url_slug: how_to_react_natively
     year: 2000
+    director: 4
     related_films: [5, 6, 8, 10, 11]
 - model: films.film
   pk: 10
@@ -77,6 +102,7 @@
     description: It's a story all about a lizard named Perry.
     url_slug: perry_hotter_a_lizards_tale
     year: 2017
+    director: 1
     related_films: [5, 6, 8, 9]
 - model: films.film
   pk: 11
@@ -85,6 +111,7 @@
     description: A story about star wars & treks
     url_slug: a_new_film
     year: 2019
+    director: 3
     related_films: [1, 9]
 - model: films.rating
   pk: 1

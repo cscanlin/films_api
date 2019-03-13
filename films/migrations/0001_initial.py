@@ -14,6 +14,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Director',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(blank=True, max_length=255, null=True)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Film',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -21,6 +28,7 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(blank=True, max_length=255, null=True)),
                 ('url_slug', models.CharField(blank=True, max_length=255, null=True)),
                 ('year', models.IntegerField(blank=True, null=True)),
+                ('director', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='films', to='films.Director')),
                 ('related_films', models.ManyToManyField(blank=True, related_name='_film_related_films_+', to='films.Film')),
             ],
         ),

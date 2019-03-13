@@ -4,6 +4,14 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Avg
 
+class Director(models.Model):
+    name = models.CharField(max_length=255, null=True, blank=True)
+
+    @classmethod
+    def relations_diplay_fields(cls):
+        return {
+            'films': 'title',
+        }
 
 class Film(models.Model):
 
@@ -11,6 +19,8 @@ class Film(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     url_slug = models.CharField(max_length=255, null=True, blank=True)
     year = models.IntegerField(null=True, blank=True)
+
+    director = models.ForeignKey(Director, related_name='films', on_delete=models.CASCADE)
 
     # many to many related with itself. There is a hidden through table
     related_films = models.ManyToManyField('self', blank=True)
