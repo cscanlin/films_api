@@ -62,7 +62,10 @@ AUTO_DRF = {
             'Rating',
         ],
     },
-    'SERIALIZE_NESTED_LEVEL': 1,
+    'ROUTES': [
+        ('films.Film', 'films.Rating'),
+        ('films.Rating', ),
+    ],
 }
 
 MIDDLEWARE = [

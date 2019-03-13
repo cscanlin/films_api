@@ -18,9 +18,6 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
             self.fields.pop(field_name)
 
 def add_nested_serializers(auto_serializers):
-    nesting_level = settings.AUTO_DRF.get('SERIALIZE_NESTED_LEVEL', 0)
-    if nesting_level == 0:
-        return auto_serializers
 
     base_serializers = {serializer_name: type(
         serializer_name,
