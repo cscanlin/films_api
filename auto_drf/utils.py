@@ -1,13 +1,9 @@
-from django.db import models
+from django.db.models.fields.related import RelatedField
+from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
 
-FIELD_FILTERS_MAP = {
-    models.CharField: ['icontains'],
-    models.IntegerField: ['lte', 'gte'],
-}
+RELATED_FIELD_TYPES = (RelatedField, ManyToOneRel, ManyToManyRel)
 
 def dynamic_field_filters(model):
-    fields = {}
-    for field in model._meta.get_fields():
-        if field.__class__ in FIELD_FILTERS_MAP.keys():
-            fields[field.name] = FIELD_FILTERS_MAP[field.__class__]
-    return fields
+    return {field.name: field.__class__.class_lookups.keys()
+            for field in model._meta.get_fields()
+            if not isinstance(field, RELATED_FIELD_TYPES)}

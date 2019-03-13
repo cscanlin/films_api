@@ -3,10 +3,8 @@
 import React from 'react'
 import PropTypes from 'prop-types';
 
+// TODO
 const filterTypeDisplayNames = {
-  'icontains': 'Contains',
-  'gte': '>=',
-  'lte': '<=',
 }
 
 class DynamicFilter extends React.Component {
@@ -47,7 +45,9 @@ class DynamicFilter extends React.Component {
 
   filterSelect() {
     const filterTypeOptions = this.props.availableFilters.map(filterType => (
-      <option value={filterType}>{filterTypeDisplayNames[filterType]}</option>
+      <option value={filterType}>
+        {filterTypeDisplayNames[filterType] || filterType}
+      </option>
     ))
     return (
       <select

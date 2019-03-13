@@ -43,3 +43,8 @@ The application is deployed on a free heroku instance as well, and can be viewed
 Tests are in `tests.py` and can be run with:
 
     python manage.py test
+
+
+### TODO
+  - support for controllable serializer fields
+  - better nesting/route handling
