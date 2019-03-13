@@ -7,10 +7,19 @@ from django.db.models import Avg
 class Director(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
     @classmethod
     def relations_diplay_fields(cls):
         return {
             'films': 'title',
+        }
+
+    @classmethod
+    def calculated_properites(cls):
+        return {
+            'average_score': Avg('films__ratings__score'),
         }
 
 class Film(models.Model):
@@ -31,6 +40,7 @@ class Film(models.Model):
     @classmethod
     def relations_diplay_fields(cls):
         return {
+            'director': 'name',
             'ratings': 'score',
             'related_films': 'title',
         }

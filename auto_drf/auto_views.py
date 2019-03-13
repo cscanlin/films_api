@@ -19,10 +19,11 @@ def generate_auto_views(auto_serializers):
 
         if hasattr(model, 'get_queryset'):
             queryset = model.get_queryset()
-        elif hasattr(model, 'calculated_properites'):
-            queryset = model.objects.all().annotate(**model.calculated_properites())
         else:
             queryset = model.objects.all()
+
+        if hasattr(model, 'calculated_properites'):
+            queryset = queryset.annotate(**model.calculated_properites())
 
         filter_meta_attributes = {
             'model': model,
