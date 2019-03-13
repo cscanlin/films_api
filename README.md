@@ -46,5 +46,7 @@ Tests are in `tests.py` and can be run with:
 
 
 ### TODO
-  - support for controllable serializer fields
-  - better nesting/route handling
+  - control fields present in serializer (replace __all__)
+  - better nested serializer/route handling
+  - filter nested object
+  - True NEST_LEVEL

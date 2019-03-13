@@ -63,11 +63,6 @@ AUTO_DRF = {
             'Rating',
         ],
     },
-    'ROUTES': [
-        ('films.Film', ),
-        ('films.Rating', ),
-        ('films.Film', 'films.Rating'),
-    ],
 }
 
 MIDDLEWARE = [
