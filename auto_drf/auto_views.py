@@ -17,6 +17,13 @@ def generate_auto_views(auto_serializers):
         model = serializer_class.Meta.model
         model_plural_name = str(model._meta.verbose_name_plural)
 
+        if hasattr(model, 'get_queryset'):
+            queryset = model.get_queryset()
+        elif hasattr(model, 'calculated_properites'):
+            queryset = model.objects.all().annotate(**model.calculated_properites())
+        else:
+            queryset = model.objects.all()
+
         filter_meta_attributes = {
             'model': model,
             'fields': dynamic_field_filters(model),
@@ -25,7 +32,7 @@ def generate_auto_views(auto_serializers):
         filter_class = type(serializer_name, (FilterSet,), {'Meta': FilterMeta})
 
         model_view_attributes = {
-            'queryset': model.objects.all(),
+            'queryset': queryset,
             'serializer_class': serializer_class,
             'filter_class': filter_class,
         }

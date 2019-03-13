@@ -1,7 +1,8 @@
 import statistics
 
-from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
+from django.db.models import Avg
 
 
 class Film(models.Model):
@@ -22,6 +23,12 @@ class Film(models.Model):
         return {
             'ratings': 'score',
             'related_films': 'title',
+        }
+
+    @classmethod
+    def calculated_properites(cls):
+        return {
+            'average_score': Avg('ratings__score'),
         }
 
     @property

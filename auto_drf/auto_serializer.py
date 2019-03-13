@@ -4,8 +4,6 @@ from django.db.models.fields.related import RelatedField, ManyToManyField
 from django.db.models.fields.reverse_related import ForeignObjectRel, ManyToOneRel, ManyToManyRel
 from rest_framework import serializers
 
-from .utils import all_table_fields
-
 MANY_REL_TYPES = (ManyToManyField, ManyToOneRel, ManyToManyRel)
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
@@ -47,10 +45,11 @@ def add_nested_serializers(auto_serializers):
                                                            required=False, read_only=True)
             setattr(serializer_class, field.name, nested_serializer_instance)
 
-        serializer_class._declared_fields = serializer_class._get_declared_fields(
+        serializer_declared_fields = serializer_class._get_declared_fields(
             serializer_class.__bases__,
             dict(serializer_class.__dict__),
         )
+        serializer_class._declared_fields.update(serializer_declared_fields)
     return auto_serializers
 
 def generate_auto_serializers(auto_models):
@@ -60,16 +59,22 @@ def generate_auto_serializers(auto_models):
 
     auto_serializers = {}
     for model in auto_models_classes:
+
         meta_attributes = {
             'model': model,
-            'fields': all_table_fields(model),
+            'fields': '__all__',
         }
         Meta = type('Meta', (object,), meta_attributes)
+
+        additional_attrs = {}
+        if hasattr(model, 'calculated_properites'):
+            for k, v in model.calculated_properites().items():
+                additional_attrs[k] = serializers.IntegerField(read_only=True, required=False)
 
         serializer_name = model._meta.object_name + 'Serializer'
         serializer_class = type(serializer_name,
                                 (DynamicFieldsModelSerializer,),
-                                {'Meta': Meta})
+                                {'Meta': Meta, **additional_attrs})
         auto_serializers[serializer_name] = serializer_class
 
     add_nested_serializers(auto_serializers)
