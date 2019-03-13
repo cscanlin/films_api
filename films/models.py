@@ -19,7 +19,7 @@ class Director(models.Model):
     @classmethod
     def calculated_properites(cls):
         return {
-            'average_score': Avg('films__ratings__score'),
+            'average_score': (models.FloatField, Avg('films__ratings__score')),
         }
 
 class Film(models.Model):
@@ -48,7 +48,7 @@ class Film(models.Model):
     @classmethod
     def calculated_properites(cls):
         return {
-            'average_score': Avg('ratings__score'),
+            'average_score': (models.FloatField, Avg('ratings__score')),
         }
 
     @property
