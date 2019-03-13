@@ -22,8 +22,8 @@ def generate_auto_views(auto_serializers):
         else:
             queryset = model.objects.all()
 
-        if hasattr(model, 'calculated_properites'):
-            property_annotations = {k: v[1] for k, v in model.calculated_properites().items()}
+        if hasattr(model, 'calculated_properties'):
+            property_annotations = {k: v[1] for k, v in model.calculated_properties().items()}
             queryset = queryset.annotate(**property_annotations)
 
         filter_meta_attributes = {
@@ -31,7 +31,7 @@ def generate_auto_views(auto_serializers):
             'fields': dynamic_field_filters(model),
         }
         FilterMeta = type('Meta', (object, ), filter_meta_attributes)
-        filter_class = type(serializer_name, (FilterSet,), {'Meta': FilterMeta})
+        filter_class = type(serializer_name + 'Filter', (FilterSet,), {'Meta': FilterMeta})
 
         model_view_attributes = {
             'queryset': queryset,

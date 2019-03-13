@@ -64,8 +64,8 @@ def generate_auto_serializers(auto_models):
         Meta = type('Meta', (object,), meta_attributes)
 
         additional_attrs = {}
-        if hasattr(model, 'calculated_properites'):
-            for k, v in model.calculated_properites().items():
+        if hasattr(model, 'calculated_properties'):
+            for k, v in model.calculated_properties().items():
                 serializer_field_type = getattr(serializers, v[0].__name__)
                 additional_attrs[k] = serializer_field_type(read_only=True, required=False)
 

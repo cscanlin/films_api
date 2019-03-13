@@ -5,7 +5,7 @@ def all_table_fields(model):
                          if rel_field not in all_table_fields]
 
     # support for auto_drf
-    if hasattr(model, 'calculated_properites'):
-        all_table_fields += list(model.calculated_properites().keys())
+    if hasattr(model, 'calculated_properties'):
+        all_table_fields += list(model.calculated_properties().keys())
 
     return all_table_fields
