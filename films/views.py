@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import generics, mixins, filters, status
 from rest_framework.response import Response
 
-from auto_drf.utils import dynamic_field_filters
+from auto_drf.auto_filters import dynamic_field_filters
 
 from .models import Film, Rating
 from .serializers import RootFilmSerializer, RatingSerializer, FilmRatingSerializer

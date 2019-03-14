@@ -1,6 +1,6 @@
 from django.db.models.fields.related import RelatedField
 from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
-from django_filters.rest_framework.filterset import FILTER_FOR_DBFIELD_DEFAULTS
+from django_filters.rest_framework.filterset import FilterSet, FILTER_FOR_DBFIELD_DEFAULTS
 
 RELATED_FIELD_TYPES = (RelatedField, ManyToOneRel, ManyToManyRel)
 
@@ -19,3 +19,14 @@ def calculated_properties_filters(model):
                 filter_field = filter_type(field_name=field_name, lookup_expr=lookup_expr)
                 property_filters[f'{field_name}__{lookup_expr}'] = filter_field
     return property_filters
+
+def generate_auto_filter(model):
+    filter_meta_attributes = {
+        'model': model,
+        'fields': dynamic_field_filters(model),
+    }
+    FilterMeta = type('Meta', (object, ), filter_meta_attributes)
+    filter_class = type(model.__name__ + 'Filter',
+                        (FilterSet,),
+                        {'Meta': FilterMeta, **calculated_properties_filters(model)})
+    return filter_class
