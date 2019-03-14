@@ -26,4 +26,8 @@ class FilterMetadata(SimpleMetadata):
             metadata['fields'][field_name]['filters'] = field_filters
         metadata.pop('actions', {})
 
+        for filter_name, filter_obj in view.filter_class.declared_filters.items():
+            metadata['fields'][filter_obj.field_name].setdefault('filters', [])
+            metadata['fields'][filter_obj.field_name]['filters'].append(filter_obj.lookup_expr)
+
         return metadata

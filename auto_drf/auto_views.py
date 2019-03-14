@@ -2,7 +2,7 @@ from django_filters.rest_framework import FilterSet
 from rest_framework import generics
 
 from .auto_serializer import AUTO_SERIALIZERS
-from .utils import dynamic_field_filters
+from .utils import dynamic_field_filters, calculated_properties_filters
 
 # These classes contain the bulk of the logic and are the most common place for customization
 # Each class inherits from either a `ListCreateAPIView` class for general endpoints,
@@ -31,7 +31,9 @@ def generate_auto_views(auto_serializers):
             'fields': dynamic_field_filters(model),
         }
         FilterMeta = type('Meta', (object, ), filter_meta_attributes)
-        filter_class = type(serializer_name + 'Filter', (FilterSet,), {'Meta': FilterMeta})
+        filter_class = type(serializer_name + 'Filter',
+                            (FilterSet,),
+                            {'Meta': FilterMeta, **calculated_properties_filters(model)})
 
         model_view_attributes = {
             'queryset': queryset,
