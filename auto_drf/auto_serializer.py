@@ -12,7 +12,7 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
         try:
             fields_string = self.context['request'].query_params['fields']
-        except KeyError:
+        except (KeyError, AttributeError):
             return
         for field_name in set(self.fields.keys()) - set(fields_string.split(',')):
             self.fields.pop(field_name)
