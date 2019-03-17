@@ -1,5 +1,6 @@
 from django.urls import path
 
+from .auto_schema import generate_auto_drf_schema_view
 from .auto_views import AUTO_VIEWS
 
 def generate_auto_urlpatterns(auto_views):
@@ -11,3 +12,4 @@ def generate_auto_urlpatterns(auto_views):
 
 
 urlpatterns = generate_auto_urlpatterns(AUTO_VIEWS)
+urlpatterns.append(path('schema/', generate_auto_drf_schema_view))

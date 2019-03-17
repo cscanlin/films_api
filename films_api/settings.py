@@ -55,6 +55,7 @@ REST_FRAMEWORK = {
 }
 
 AUTO_DRF = {
+    'API_TITLE': 'Films API',
     'API_ROOT_PATH': 'api/',
     'MODELS': {
         'films': [
