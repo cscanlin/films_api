@@ -41,14 +41,16 @@ class DBTable extends React.Component {
   }
 
   loadMetadata() {
+    // return fetch('/api/schema')
     return fetch(this.props.url, {method: 'OPTIONS'})
       .then((response) => {
           if (response.status >= 400) {
               throw new Error("Bad response from server")
           }
           return response.json()
-      }).then(response => {
-        this.setState({ metadata: response })
+      }).then(data => {
+        console.log(data);
+        this.setState({ metadata: data })
       })
   }
 
