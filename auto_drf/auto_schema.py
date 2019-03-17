@@ -1,31 +1,64 @@
+from urllib.parse import urljoin
+
 from django.conf import settings
+from django.http import JsonResponse
+from django_filters.filters import (
+    BooleanFilter,
+    CharFilter,
+    NumberFilter,
+)
+from rest_framework.generics import ListCreateAPIView
 
-from rest_framework.decorators import api_view, renderer_classes
-from rest_framework.renderers import JSONOpenAPIRenderer
-from rest_framework.schemas import SchemaGenerator
-from rest_framework.response import Response
+from .auto_views import AUTO_VIEWS
 
-class AutoDRFSchemaGenerator(SchemaGenerator):
+API_ROOT_PATH = '/' + settings.AUTO_DRF.get('API_ROOT_PATH', 'api/')
 
-    def get_links(self, request):
-        links = super().get_links(request)
-        for document_name, node in links.items():
-            for method, link in node.links:
-                if str(method) != 'list':
-                    continue
-                for field in link.fields:
-                    if '__' in field.name:
-                        field.description = '!!Filter' + (field.description or '')
-                    print(field)
-        return links
+FILTER_TYPE_LOOKUP = {
+    BooleanFilter: 'boolean',
+    CharFilter: 'string',
+    NumberFilter: 'number',
+}
 
+def generate_auto_drf_schema(request):
 
-@api_view()
-@renderer_classes([JSONOpenAPIRenderer])
-def generate_auto_drf_schema_view(request):
-    generator = AutoDRFSchemaGenerator(
-        title=settings.AUTO_DRF.get('API_TITLE'),
-        url='/' + settings.AUTO_DRF.get('API_ROOT_PATH', 'api/'),
-        urlconf='auto_drf.auto_urls',
-    )
-    return Response(generator.get_schema())
+    open_api_schema = {
+        'openapi': '3.0.0',
+        'info': {
+            'version': '',
+            'title': settings.AUTO_DRF.get('API_TITLE'),
+            'description': '',
+        },
+        'servers': [{'url': API_ROOT_PATH}],
+        'paths': {},
+    }
+
+    for view_name, view_class in AUTO_VIEWS.items():
+
+        if not issubclass(view_class, ListCreateAPIView):
+            continue
+
+        view_relative_route = urljoin(API_ROOT_PATH, view_class.url_route)
+        all_filters = view_class.filter_class.base_filters.copy()
+        all_filters.update(view_class.filter_class.declared_filters)
+
+        parameters = []
+        for field_name, field_class in all_filters.items():
+            parameters.append({
+                'name': field_name,
+                'in': 'query',
+                'schema': {
+                    'type': FILTER_TYPE_LOOKUP.get(field_class.__class__, 'string'),
+                    'title': field_name,
+                    'description': f'!!Filter',
+                }
+            })
+
+        operation_id = view_class.serializer_class.Meta.model._meta.verbose_name_plural + '_list'
+        open_api_schema['paths'][view_relative_route] = {
+            'get': {
+                'operationId': operation_id,
+                'parameters': parameters,
+            },
+        }
+
+    return JsonResponse(open_api_schema)
