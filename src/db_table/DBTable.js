@@ -52,7 +52,7 @@ class DBTable extends React.Component {
       }).then(data => {
         const parameters = data['paths'][this.props.url]['get']['parameters']
         const schema = data['paths'][this.props.url]['get']['responses']['200']['content']['application/json']['schema']['items']
-        const orderedFields = schema['x-field_order'] || Object.keys(schema.properties)
+        const orderedFields = schema['x-fieldOrder'] || Object.keys(schema.properties)
         const metadata = {
             orderedFields,
             fields: {},
@@ -60,8 +60,9 @@ class DBTable extends React.Component {
         orderedFields.forEach(fieldName => {
           metadata['fields'][fieldName] = {
             label: fieldName,
-            childFields: schema.properties[fieldName]['x-child_fields'],
-            filters: parameters.filter(param => param['x-related_field'] === fieldName),
+            childFields: schema.properties[fieldName]['x-childFields'],
+            displayAccessor: schema.properties[fieldName]['x-displayAccessor'],
+            filters: parameters.filter(param => param['x-relatedField'] === fieldName),
           }
         })
         this.setState({ metadata })
@@ -88,13 +89,13 @@ class DBTable extends React.Component {
         const column = {
           Header: fieldData.label,
           id: fieldName,
-          accessor: fieldData.display_accessor
-                    ? f => f[fieldName][fieldData.display_accessor] || JSON.stringify(f[fieldName])
+          accessor: fieldData.displayAccessor
+                    ? f => f[fieldName][fieldData.displayAccessor] || JSON.stringify(f[fieldName])
                     : f => JSON.stringify(f[fieldName]),
         }
         if (fieldData.childFields) {
-          const renderArrayItem = fieldData.display_accessor
-            ? (arrayItem) => <p>{arrayItem[fieldData.display_accessor]}</p>
+          const renderArrayItem = fieldData.displayAccessor
+            ? (arrayItem) => <p>{arrayItem[fieldData.displayAccessor]}</p>
             : undefined
           column.Cell = (row) => (
             <ArrayCell

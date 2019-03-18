@@ -46,6 +46,7 @@ def generate_auto_drf_schema(request):
         'components': {'schemas': {}}
     }
     for view_class in AUTO_VIEWS.values():
+
         if not issubclass(view_class, ListCreateAPIView):
             continue
 
@@ -60,16 +61,20 @@ def generate_auto_drf_schema(request):
 
 def get_schema(view_class):
     properties = {}
+    model = view_class.serializer_class.Meta.model
     for field_name, field_obj in view_class.serializer_class().get_fields().items():
         properties[field_name] = {
             'type': FIELD_TYPE_LOOKUP.get(field_obj.__class__, 'string'),
-            'x-child_fields': isinstance(field_obj, ListSerializer),
+            'x-childFields': isinstance(field_obj, ListSerializer),
         }
+        if hasattr(model, 'relations_diplay_fields'):
+            display_accessor = model.relations_diplay_fields().get(field_name)
+            properties[field_name]['x-displayAccessor'] = display_accessor
 
     return {
         'type': 'object',
         'properties': properties,
-        'x-field_order': all_table_fields(view_class.serializer_class.Meta.model),
+        'x-fieldOrder': all_table_fields(view_class.serializer_class.Meta.model),
     }
 
 def get_path(view_class, schema):
@@ -87,10 +92,9 @@ def get_path(view_class, schema):
                 'title': filter_name,
                 'description': '',
             },
-            'x-filter_param': True,
-            'x-related_field': filter_name.split('__')[0],
+            'x-filterParam': True,
+            'x-relatedField': filter_name.split('__')[0],
         })
-
     operation_id = view_class.serializer_class.Meta.model._meta.verbose_name_plural + '_list'
     return {
         'get': {
