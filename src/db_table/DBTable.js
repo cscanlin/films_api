@@ -34,10 +34,11 @@ class DBTable extends React.Component {
     }
     this.loadMetadata = this.loadMetadata.bind(this)
     this.fetchData = this.fetchData.bind(this)
+    this.newMetadata = this.newMetadata.bind(this)
   }
 
   componentDidMount() {
-    this.loadMetadata()
+    // this.loadMetadata()
     this.newMetadata()
   }
 
@@ -49,12 +50,24 @@ class DBTable extends React.Component {
           }
           return response.json()
       }).then(data => {
-        console.log(data)
+        const parameters = data['paths'][this.props.url]['get']['parameters']
+        const schema = data['paths'][this.props.url]['get']['responses']['200']['content']['application/json']['schema']
+        const fields = Object.keys(schema.items.properties)
+        const metadata = {
+            orderedFields: fields,
+            fields: {},
+        }
+        fields.forEach(fieldName => {
+          metadata['fields'][fieldName] = {
+            label: fieldName,
+            filters: parameters.filter(param => param['x-related_field'] === fieldName),
+          }
+        })
+        this.setState({ metadata })
       })
   }
 
   loadMetadata() {
-    // return fetch('/api/schema')
     return fetch(this.props.url, {method: 'OPTIONS'})
       .then((response) => {
           if (response.status >= 400) {
@@ -69,10 +82,10 @@ class DBTable extends React.Component {
   getColumns(metadata) {
     let columns = []
     if (Object.keys(metadata).length) {
-      columns = metadata.ordered_fields.map((fieldName) => {
+      columns = metadata.orderedFields.map((fieldName) => {
         const fieldData = metadata.fields[fieldName]
         const column = {
-          Header: fieldData['label'],
+          Header: fieldData.label,
           id: fieldName,
           accessor: fieldData.display_accessor
                     ? f => f[fieldName][fieldData.display_accessor] || JSON.stringify(f[fieldName])
@@ -93,7 +106,7 @@ class DBTable extends React.Component {
         if (fieldData.filters) {
           column.Filter = ({ filter, onChange }) => (
             <DynamicFilter
-              availableFilters={fieldData.filters}
+              availableFilters={fieldData.filters.map(param => param.name)}
               filter={filter}
               onChange={onChange}
             />
@@ -111,7 +124,7 @@ class DBTable extends React.Component {
     this.setState({ loading: true })
 
     const params = state.filtered.reduce((filterParams, filterEntry) => (
-      { ...filterParams, [`${filterEntry.id}__${filterEntry.value.filterType}`]: filterEntry.value.filterValue }), {}
+      { ...filterParams, [`${filterEntry.value.filterType}`]: filterEntry.value.filterValue }), {}
     )
 
     if (state.sorted.length) {

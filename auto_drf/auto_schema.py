@@ -48,11 +48,11 @@ def generate_auto_drf_schema(request):
             continue
 
         schema_name = view_class.serializer_class.Meta.model.__name__
-        open_api_schema['components']['schemas'][schema_name] = get_schema(view_class)
-        schema_path = '#/components/schemas/' + schema_name
+        schema = get_schema(view_class)
+        open_api_schema['components']['schemas'][schema_name] = schema
 
         view_relative_route = urljoin(API_ROOT_PATH, view_class.url_route)
-        open_api_schema['paths'][view_relative_route] = get_path(view_class, schema_path)
+        open_api_schema['paths'][view_relative_route] = get_path(view_class, schema)
 
     return JsonResponse(open_api_schema)
 
@@ -64,25 +64,11 @@ def get_schema(view_class):
         }
 
     return {
-        'type': 'array',
-        'items': {
-            'type': 'object',
-            'properties': properties,
-        },
+        'type': 'object',
+        'properties': properties,
     }
-    """
-    components:
-      schemas:
-        User:
-          type: object
-          properties:
-            id:
-              type: integer
-            name:
-              type: string
-    """
 
-def get_path(view_class, schema_path):
+def get_path(view_class, schema):
 
     all_filters = view_class.filter_class.base_filters.copy()
     all_filters.update(view_class.filter_class.declared_filters)
@@ -95,23 +81,28 @@ def get_path(view_class, schema_path):
             'schema': {
                 'type': FILTER_TYPE_LOOKUP.get(field_class.__class__, 'string'),
                 'title': field_name,
-                'description': '!!Filter',
-            }
+                'description': '',
+            },
+            'x-filter_param': True,
+            'x-related_field': field_name.split('__')[0],
         })
 
     operation_id = view_class.serializer_class.Meta.model._meta.verbose_name_plural + '_list'
-    list_schema = {
-        'type': 'array',
-        'items': {
-            '$ref': schema_path,
-        },
-    }
     return {
         'get': {
             'operationId': operation_id,
             'parameters': parameters,
             'responses': {
-                '200': {'content': {'application/json': {'schema': list_schema}}}
+                '200': {
+                    'content': {
+                        'application/json': {
+                            'schema': {
+                                'type': 'array',
+                                'items': schema,
+                            },
+                        },
+                    },
+                },
             },
         },
     }
