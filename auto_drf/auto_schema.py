@@ -74,7 +74,7 @@ def get_schema(view_class):
     return {
         'type': 'object',
         'properties': properties,
-        'x-fieldOrder': all_table_fields(view_class.serializer_class.Meta.model),
+        'x-orderedFields': all_table_fields(view_class.serializer_class.Meta.model),
     }
 
 def get_path(view_class, schema):

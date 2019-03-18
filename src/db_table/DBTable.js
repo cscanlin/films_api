@@ -24,25 +24,25 @@ const requestData = (urlString, params, pageSize, page, sorted, filtered) => {
 }
 
 class DBTable extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
-      metadata: {},
+      metadata: props.metadata || {},
       data: [],
       pages: null,
       loading: true
     }
     this.loadMetadata = this.loadMetadata.bind(this)
     this.fetchData = this.fetchData.bind(this)
-    this.newMetadata = this.newMetadata.bind(this)
   }
 
   componentDidMount() {
-    this.loadMetadata()
-    this.newMetadata()
+    if (!Object.keys(this.state.metadata).length) {
+      this.loadMetadata()
+    }
   }
 
-  newMetadata() {
+  loadMetadata() {
     return fetch('/api/schema/')
       .then((response) => {
           if (response.status >= 400) {
@@ -52,7 +52,7 @@ class DBTable extends React.Component {
       }).then(data => {
         const parameters = data['paths'][this.props.url]['get']['parameters']
         const schema = data['paths'][this.props.url]['get']['responses']['200']['content']['application/json']['schema']['items']
-        const orderedFields = schema['x-fieldOrder'] || Object.keys(schema.properties)
+        const orderedFields = schema['x-orderedFields'] || Object.keys(schema.properties)
         const metadata = {
             orderedFields,
             fields: {},
@@ -66,19 +66,8 @@ class DBTable extends React.Component {
           }
         })
         this.setState({ metadata })
-      })
-  }
-
-  loadMetadata() {
-    return fetch(this.props.url, {method: 'OPTIONS'})
-      .then((response) => {
-          if (response.status >= 400) {
-              throw new Error("Bad response from server")
-          }
-          return response.json()
-      }).then(data => {
-        console.log(data);
-      })
+        console.log(metadata)
+      }).catch(error => console.error(error));
   }
 
   getColumns(metadata) {
