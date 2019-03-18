@@ -38,12 +38,12 @@ class DBTable extends React.Component {
   }
 
   componentDidMount() {
-    // this.loadMetadata()
+    this.loadMetadata()
     this.newMetadata()
   }
 
   newMetadata() {
-    return fetch('/api/schema')
+    return fetch('/api/schema/')
       .then((response) => {
           if (response.status >= 400) {
               throw new Error("Bad response from server")
@@ -51,15 +51,16 @@ class DBTable extends React.Component {
           return response.json()
       }).then(data => {
         const parameters = data['paths'][this.props.url]['get']['parameters']
-        const schema = data['paths'][this.props.url]['get']['responses']['200']['content']['application/json']['schema']
-        const fields = Object.keys(schema.items.properties)
+        const schema = data['paths'][this.props.url]['get']['responses']['200']['content']['application/json']['schema']['items']
+        const orderedFields = schema['x-field_order'] || Object.keys(schema.properties)
         const metadata = {
-            orderedFields: fields,
+            orderedFields,
             fields: {},
         }
-        fields.forEach(fieldName => {
+        orderedFields.forEach(fieldName => {
           metadata['fields'][fieldName] = {
             label: fieldName,
+            childFields: schema.properties[fieldName]['x-child_fields'],
             filters: parameters.filter(param => param['x-related_field'] === fieldName),
           }
         })
@@ -75,7 +76,7 @@ class DBTable extends React.Component {
           }
           return response.json()
       }).then(data => {
-        this.setState({ metadata: data })
+        console.log(data);
       })
   }
 
@@ -91,7 +92,7 @@ class DBTable extends React.Component {
                     ? f => f[fieldName][fieldData.display_accessor] || JSON.stringify(f[fieldName])
                     : f => JSON.stringify(f[fieldName]),
         }
-        if (fieldData.child) {
+        if (fieldData.childFields) {
           const renderArrayItem = fieldData.display_accessor
             ? (arrayItem) => <p>{arrayItem[fieldData.display_accessor]}</p>
             : undefined

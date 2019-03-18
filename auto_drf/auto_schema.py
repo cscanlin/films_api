@@ -13,8 +13,10 @@ from rest_framework.fields import (
     IntegerField,
 )
 from rest_framework.generics import ListCreateAPIView
+from rest_framework.serializers import ListSerializer
 
 from .auto_views import AUTO_VIEWS
+from .utils import all_table_fields
 
 API_ROOT_PATH = '/' + settings.AUTO_DRF.get('API_ROOT_PATH', 'api/')
 
@@ -58,14 +60,16 @@ def generate_auto_drf_schema(request):
 
 def get_schema(view_class):
     properties = {}
-    for field_name, field_type in view_class.serializer_class().get_fields().items():
+    for field_name, field_obj in view_class.serializer_class().get_fields().items():
         properties[field_name] = {
-            'type': FIELD_TYPE_LOOKUP.get(field_type.__class__, 'string')
+            'type': FIELD_TYPE_LOOKUP.get(field_obj.__class__, 'string'),
+            'x-child_fields': isinstance(field_obj, ListSerializer),
         }
 
     return {
         'type': 'object',
         'properties': properties,
+        'x-field_order': all_table_fields(view_class.serializer_class.Meta.model),
     }
 
 def get_path(view_class, schema):
@@ -74,17 +78,17 @@ def get_path(view_class, schema):
     all_filters.update(view_class.filter_class.declared_filters)
 
     parameters = []
-    for field_name, field_class in all_filters.items():
+    for filter_name, filter_obj in all_filters.items():
         parameters.append({
-            'name': field_name,
+            'name': filter_name,
             'in': 'query',
             'schema': {
-                'type': FILTER_TYPE_LOOKUP.get(field_class.__class__, 'string'),
-                'title': field_name,
+                'type': FILTER_TYPE_LOOKUP.get(filter_obj.__class__, 'string'),
+                'title': filter_name,
                 'description': '',
             },
             'x-filter_param': True,
-            'x-related_field': field_name.split('__')[0],
+            'x-related_field': filter_name.split('__')[0],
         })
 
     operation_id = view_class.serializer_class.Meta.model._meta.verbose_name_plural + '_list'
