@@ -1,7 +1,7 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from .auto_views import AUTO_VIEWS
-from .auto_schema import generate_auto_drf_schema
+from .auto_schema import generate_auto_drf_schema, SWAGGER_SCHEMA_VIEW
 
 def generate_auto_urlpatterns(auto_views):
     auto_urlpatterns = []
@@ -12,4 +12,8 @@ def generate_auto_urlpatterns(auto_views):
 
 
 urlpatterns = generate_auto_urlpatterns(AUTO_VIEWS)
-urlpatterns.append(path('schema/', generate_auto_drf_schema))
+urlpatterns += [
+    path('schema/', generate_auto_drf_schema),
+    path('swagger/', SWAGGER_SCHEMA_VIEW.with_ui('swagger', cache_timeout=0)),
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', SWAGGER_SCHEMA_VIEW.without_ui(cache_timeout=0)),
+]

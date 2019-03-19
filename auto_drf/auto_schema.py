@@ -14,6 +14,10 @@ from rest_framework.fields import (
 )
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.serializers import ListSerializer
+from rest_framework import permissions
+
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from .auto_views import AUTO_VIEWS
 from .utils import all_table_fields
@@ -95,6 +99,7 @@ def get_path(view_class, schema):
             'x-filterParam': True,
             'x-relatedField': filter_name.split('__')[0],
         })
+
     operation_id = view_class.serializer_class.Meta.model._meta.verbose_name_plural + '_list'
     return {
         'get': {
@@ -114,3 +119,17 @@ def get_path(view_class, schema):
             },
         },
     }
+
+
+SWAGGER_SCHEMA_VIEW = get_schema_view(
+    openapi.Info(
+        title=settings.AUTO_DRF.get('API_TITLE'),
+        default_version='v1',
+        description='',
+        terms_of_service='https://www.google.com/policies/terms/',
+        contact=openapi.Contact(email='contact@snippets.local'),
+        license=openapi.License(name='BSD License'),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny, ),
+)

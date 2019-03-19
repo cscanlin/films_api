@@ -20,7 +20,6 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('films.urls')),
     path(settings.AUTO_DRF.get('API_ROOT_PATH', 'api/'), include('auto_drf.auto_urls')),
     path('db_table/', include('db_table.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
