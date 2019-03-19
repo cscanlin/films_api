@@ -5,69 +5,35 @@ import 'react-table/react-table.css'
 import { ArrayCell } from './Cells.js'
 import { DynamicFilter } from './Filters.js'
 
-const requestData = (urlString, params, pageSize, page, sorted, filtered) => {
-  const url = new URL(urlString, window.location.href)
-  url.search = new URLSearchParams(params)
-
-  return fetch(url)
-    .then((response) => {
-        if (response.status >= 400) {
-            throw new Error("Bad response from server")
-        }
-        return response.json()
-    })
-    .then((response) => ({
-        rows: response.results,
-        pages: Math.ceil(response.count / pageSize)
-      })
-    )
-}
 
 class DBTable extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      metadata: props.metadata || {},
+      metadata: {},
       data: [],
       pages: null,
       loading: true
     }
-    this.loadMetadata = this.loadMetadata.bind(this)
     this.fetchData = this.fetchData.bind(this)
   }
 
   componentDidMount() {
-    if (!Object.keys(this.state.metadata).length) {
-      this.loadMetadata()
-    }
+    this.props.loadMetadata().then(metadata => {
+      this.setState({ metadata })
+    })
   }
 
-  loadMetadata() {
-    return fetch('/api/schema/')
-      .then((response) => {
-          if (response.status >= 400) {
-              throw new Error("Bad response from server")
-          }
-          return response.json()
-      }).then(data => {
-        const parameters = data['paths'][this.props.url]['get']['parameters']
-        const schema = data['paths'][this.props.url]['get']['responses']['200']['content']['application/json']['schema']['items']
-        const orderedFields = schema['x-orderedFields'] || Object.keys(schema.properties)
-        const metadata = {
-            orderedFields,
-            fields: {},
-        }
-        orderedFields.forEach(fieldName => {
-          metadata['fields'][fieldName] = {
-            label: fieldName,
-            childFields: schema.properties[fieldName]['x-childFields'],
-            displayAccessor: schema.properties[fieldName]['x-displayAccessor'],
-            filters: parameters.filter(param => param['x-relatedField'] === fieldName),
-          }
-        })
-        this.setState({ metadata })
-        console.log(metadata)
-      }).catch(error => console.error(error));
+  filterParams(filtered) {
+    return filtered.reduce((filterParams, filterEntry) => (
+      { ...filterParams, [`${filterEntry.value.filterType}`]: filterEntry.value.filterValue }), {}
+    )
+  }
+
+  orderingParams(sorted) {
+    return sorted.map(orderItem => (
+      (orderItem.desc ? '-' : '') + orderItem.id
+    )).join(',')
   }
 
   getColumns(metadata) {
@@ -114,33 +80,27 @@ class DBTable extends React.Component {
     // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
     this.setState({ loading: true })
 
-    const params = state.filtered.reduce((filterParams, filterEntry) => (
-      { ...filterParams, [`${filterEntry.value.filterType}`]: filterEntry.value.filterValue }), {}
-    )
+    const params = {...this.filterParams(state.filtered)}
 
-    if (state.sorted.length) {
-      const orderingString = state.sorted.map(orderItem => (
-        (orderItem.desc ? '-' : '') + orderItem.id
-      )).join(',')
-      params.ordering = orderingString
-    }
+    params.ordering = this.orderingParams(state.sorted)
 
     params.page = state.page + 1
 
-    requestData(
-      this.props.url,
-      params,
-      state.pageSize,
-      state.page,
-      state.sorted,
-      state.filtered,
-    ).then(res => {
-      // Now just get the rows of data to your React Table (and update anything else like total pages or loading)
-      this.setState({
-        data: res.rows,
-        pages: res.pages,
-        loading: false,
-      })
+    const URLWithParams = new URL(this.props.APIUrl, window.location.href)
+    URLWithParams.search = new URLSearchParams(params)
+
+    fetch(URLWithParams)
+      .then(response => {
+        if (response.status >= 400) {
+            throw new Error("Bad response from server")
+        }
+        return response.json()
+      }).then(res => {
+        this.setState({
+          data: res.results,
+          pages: Math.ceil(res.results.count / state.pageSize),
+          loading: false,
+        })
     })
   }
 
