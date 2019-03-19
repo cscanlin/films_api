@@ -16,8 +16,9 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.serializers import ListSerializer
 from rest_framework import permissions
 
-from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from drf_yasg.generators import OpenAPISchemaGenerator
+from drf_yasg.views import get_schema_view
 
 from .auto_views import AUTO_VIEWS
 from .utils import all_table_fields
@@ -67,10 +68,13 @@ def get_schema(view_class):
     properties = {}
     model = view_class.serializer_class.Meta.model
     for field_name, field_obj in view_class.serializer_class().get_fields().items():
-        properties[field_name] = {
-            'type': FIELD_TYPE_LOOKUP.get(field_obj.__class__, 'string'),
-            'x-childFields': isinstance(field_obj, ListSerializer),
-        }
+
+        if isinstance(field_obj, ListSerializer):
+            field_type = 'array'
+        else:
+            field_type = FIELD_TYPE_LOOKUP.get(field_obj.__class__, 'string')
+        properties[field_name] = {'type': field_type}
+
         if hasattr(model, 'relations_diplay_fields'):
             display_accessor = model.relations_diplay_fields().get(field_name)
             properties[field_name]['x-displayAccessor'] = display_accessor
@@ -88,16 +92,22 @@ def get_path(view_class, schema):
 
     parameters = []
     for filter_name, filter_obj in all_filters.items():
+
+        try:
+            related_field, description_key = filter_name.split('__')
+        except ValueError:
+            related_field, description_key = filter_name, 'exact'
+
         parameters.append({
             'name': filter_name,
             'in': 'query',
             'schema': {
                 'type': FILTER_TYPE_LOOKUP.get(filter_obj.__class__, 'string'),
                 'title': filter_name,
-                'description': '',
+                'description': description_key,
             },
             'x-filterParam': True,
-            'x-relatedField': filter_name.split('__')[0],
+            'x-relatedField': related_field,
         })
 
     operation_id = view_class.serializer_class.Meta.model._meta.verbose_name_plural + '_list'
@@ -120,6 +130,28 @@ def get_path(view_class, schema):
         },
     }
 
+class AutoDRFSchemaGenerator(OpenAPISchemaGenerator):
+    def get_path_item(self, path, view_cls, operations):
+        # print(path)
+        path_item = super().get_path_item(path, view_cls, operations)
+        # print('path_item', path_item)
+        return path_item
+
+    def get_operation(self, view, path, prefix, method, components, request):
+
+        all_filters = view.filter_class.base_filters.copy()
+        all_filters.update(view.filter_class.declared_filters)
+
+        operation = super().get_operation(view, path, prefix, method, components, request)
+        for parameter in operation['parameters']:
+            try:
+                related_field, description_key = parameter['name'].split('__')
+            except ValueError:
+                related_field, description_key = parameter['name'], 'exact'
+            setattr(parameter, 'x-filterParam', (parameter['name'] in all_filters))
+            setattr(parameter, 'x-relatedField', related_field)
+        return operation
+
 
 SWAGGER_SCHEMA_VIEW = get_schema_view(
     openapi.Info(
@@ -132,4 +164,5 @@ SWAGGER_SCHEMA_VIEW = get_schema_view(
     ),
     public=True,
     permission_classes=(permissions.AllowAny, ),
+    generator_class=AutoDRFSchemaGenerator
 )
