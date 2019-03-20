@@ -40,16 +40,16 @@ function loadSwagger2Metadata(schemaURL, APIUrl) {
     .then(schema => {
       const schemaPath = APIUrl.replace(schema.basePath, '')
       const parameters = schema['paths'][schemaPath]['get']['parameters']
-      const objSchema = schema['paths'][schemaPath]['get']['responses']['200']['schema']['properties']['results']['items']['properties']
-      const orderedFields = objSchema['x-orderedFields'] || Object.keys(objSchema)
+      const objSchema = schema['paths'][schemaPath]['get']['responses']['200']['schema']['properties']['results']['items']
+      const orderedFields = objSchema.properties['x-orderedFields'] || Object.keys(objSchema.properties)
       const metadata = {
           orderedFields,
           fields: {},
       }
-      console.log(objSchema)
       orderedFields.forEach(fieldName => {
         metadata['fields'][fieldName] = {
-          ...objSchema[fieldName],
+          ...objSchema.properties[fieldName],
+          displayAccessor: objSchema.relationsDiplayFields[fieldName],
           filters: parameters.filter(param => param['x-relatedField'] === fieldName),
         }
       })

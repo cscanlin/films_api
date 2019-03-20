@@ -42,7 +42,7 @@ class DBTable extends React.Component {
       columns = metadata.orderedFields.map((fieldName) => {
         const fieldData = metadata.fields[fieldName]
         const column = {
-          Header: fieldData.title,
+          Header: fieldData.title || fieldName,
           id: fieldName,
           accessor: fieldData.displayAccessor
                     ? f => f[fieldName][fieldData.displayAccessor] || JSON.stringify(f[fieldName])

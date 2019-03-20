@@ -60,6 +60,9 @@ def generate_auto_serializers(auto_models):
         meta_attributes = {
             'model': model,
             'fields': '__all__',
+            'swagger_schema_fields': {
+                'relationsDiplayFields': model.relations_diplay_fields(),
+            }
         }
         Meta = type('Meta', (object,), meta_attributes)
 
