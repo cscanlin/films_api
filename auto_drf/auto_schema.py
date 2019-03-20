@@ -131,11 +131,6 @@ def get_path(view_class, schema):
     }
 
 class AutoDRFSchemaGenerator(OpenAPISchemaGenerator):
-    def get_path_item(self, path, view_cls, operations):
-        # print(path)
-        path_item = super().get_path_item(path, view_cls, operations)
-        # print('path_item', path_item)
-        return path_item
 
     def get_operation(self, view, path, prefix, method, components, request):
 
