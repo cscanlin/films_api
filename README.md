@@ -48,5 +48,7 @@ Tests are in `tests.py` and can be run with:
 ### TODO
   - control fields present in serializer (replace __all__)
   - better nested serializer/route handling
-  - filter nested object
+  - fix openapi3 !!!
+  - fix relations_diplay_fields / modify schema !!!
+  - filter nested object !!!
   - True NEST_LEVEL??
