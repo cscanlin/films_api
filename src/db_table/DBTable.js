@@ -26,7 +26,7 @@ class DBTable extends React.Component {
 
   filterParams(filtered) {
     return filtered.reduce((filterParams, filterEntry) => (
-      { ...filterParams, [`${filterEntry.value.filterType}`]: filterEntry.value.filterValue }), {}
+      { ...filterParams, [`${filterEntry.value.filterType.name}`]: filterEntry.value.filterValue }), {}
     )
   }
 
@@ -48,8 +48,6 @@ class DBTable extends React.Component {
                     ? f => f[fieldName][fieldData.displayAccessor] || JSON.stringify(f[fieldName])
                     : f => JSON.stringify(f[fieldName]),
         }
-        console.log(fieldName);
-        console.log(fieldData);
         if (fieldData.type === 'array') {
           const renderArrayItem = fieldData.displayAccessor
             ? (arrayItem) => <p>{arrayItem[fieldData.displayAccessor]}</p>
@@ -65,7 +63,7 @@ class DBTable extends React.Component {
         if (fieldData.filters) {
           column.Filter = ({ filter, onChange }) => (
             <DynamicFilter
-              availableFilters={fieldData.filters.map(param => param.name)}
+              availableFilters={fieldData.filters}
               filter={filter}
               onChange={onChange}
             />

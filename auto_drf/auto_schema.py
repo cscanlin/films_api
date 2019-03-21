@@ -94,9 +94,9 @@ def get_path(view_class, schema):
     for filter_name, filter_obj in all_filters.items():
 
         try:
-            related_field, description_key = filter_name.split('__')
+            related_field, lookup_expr = filter_name.split('__')
         except ValueError:
-            related_field, description_key = filter_name, 'exact'
+            related_field, lookup_expr = filter_name, 'exact'
 
         parameters.append({
             'name': filter_name,
@@ -104,7 +104,7 @@ def get_path(view_class, schema):
             'schema': {
                 'type': FILTER_TYPE_LOOKUP.get(filter_obj.__class__, 'string'),
                 'title': filter_name,
-                'description': description_key,
+                'description': lookup_expr,
             },
             'x-filterParam': True,
             'x-relatedField': related_field,
@@ -133,18 +133,14 @@ def get_path(view_class, schema):
 class AutoDRFSchemaGenerator(OpenAPISchemaGenerator):
 
     def get_operation(self, view, path, prefix, method, components, request):
-
-        all_filters = view.filter_class.base_filters.copy()
-        all_filters.update(view.filter_class.declared_filters)
-
         operation = super().get_operation(view, path, prefix, method, components, request)
         for parameter in operation['parameters']:
             try:
-                related_field, description_key = parameter['name'].split('__')
+                related_field, lookup_expr = parameter['name'].split('__')
             except ValueError:
-                related_field, description_key = parameter['name'], 'exact'
-            setattr(parameter, 'x-filterParam', (parameter['name'] in all_filters))
+                related_field, lookup_expr = parameter['name'], 'exact'
             setattr(parameter, 'x-relatedField', related_field)
+            setattr(parameter, 'x-filterDescription', lookup_expr)
         return operation
 
 

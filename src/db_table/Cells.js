@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 
 class ArrayCell extends React.Component {
   constructor(props) {
@@ -7,7 +7,7 @@ class ArrayCell extends React.Component {
     this.state = {
       expanded: false,
     }
-    this.expandCollapseItems = this.expandCollapseItems.bind(this);
+    this.expandCollapseItems = this.expandCollapseItems.bind(this)
   }
 
   fieldData() {

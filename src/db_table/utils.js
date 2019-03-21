@@ -25,7 +25,7 @@ function loadOpenAPI3Metadata(schemaURL, APIUrl) {
         }
       })
       return metadata
-    }).catch(error => console.error(error));
+    }).catch(error => console.error(error))
 }
 
 function loadSwagger2Metadata(schemaURL, APIUrl) {
@@ -55,7 +55,7 @@ function loadSwagger2Metadata(schemaURL, APIUrl) {
       })
       return metadata
     })
-    .catch(error => console.error(error));
+    .catch(error => console.error(error))
 }
 
 export { loadOpenAPI3Metadata, loadSwagger2Metadata }
