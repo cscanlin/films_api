@@ -50,7 +50,10 @@ def get_schema(view_class):
             field_type = 'object'
         else:
             field_type = FIELD_TYPE_LOOKUP.get(field_obj.__class__, 'string')
-        properties[field_name] = {'type': field_type}
+        properties[field_name] = {
+            'title': field_obj.label or field_name.replace('_', ' ').title(),
+            'type': field_type,
+        }
 
     schema = {
         'type': 'object',
@@ -71,20 +74,24 @@ def get_path(view_class, schema):
     for filter_name, filter_obj in all_filters.items():
 
         if isinstance(filter_obj, RelatedFilter):
-            # TODO Extract
+            # TODO Extract duplicate logic
+
             all_related_filters = filter_obj.filterset.base_filters.copy()
             all_related_filters.update(filter_obj.filterset.declared_filters)
+
             for related_filter_name, related_filter_obj in all_related_filters.items():
                 related_filter_full_name = '__'.join((filter_name, related_filter_name))
+
                 try:
                     related_subfield, lookup_expr = related_filter_name.split('__')
                 except ValueError:
                     related_subfield, lookup_expr = related_filter_name, 'exact'
+
                 parameters.append({
                     'name': related_filter_full_name,
                     'in': 'query',
                     'schema': {
-                        'type': FILTER_TYPE_LOOKUP.get(filter_obj.__class__, 'string'),
+                        'type': FILTER_TYPE_LOOKUP.get(related_filter_obj.__class__, 'string'),
                         'title': related_filter_name,
                     },
                     'x-relatedField': filter_name,
