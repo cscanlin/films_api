@@ -1,7 +1,7 @@
 Django==2.1.7
 django-extensions==2.1.6
 djangorestframework==3.9.2
-djangorestframework-filters==0.10.2.post0
+djangorestframework-filters==1.0.0.dev0
 django-filter==2.1.0
 drf-yasg==1.14.0
 PyYAML==3.13

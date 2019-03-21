@@ -1,6 +1,6 @@
 from rest_framework import generics
 
-from .auto_filters import generate_auto_filter
+from .auto_filters import AUTO_FILTERS
 from .auto_serializer import AUTO_SERIALIZERS
 
 # These classes contain the bulk of the logic and are the most common place for customization
@@ -28,7 +28,7 @@ def generate_auto_views(auto_serializers):
         model_view_attributes = {
             'queryset': queryset,
             'serializer_class': serializer_class,
-            'filter_class': generate_auto_filter(model),
+            'filter_class': AUTO_FILTERS.get(model.__name__ + 'Filter'),
         }
 
         list_view_name = model._meta.object_name + 'List'
@@ -49,3 +49,8 @@ def generate_auto_views(auto_serializers):
 
 
 AUTO_VIEWS = generate_auto_views(AUTO_SERIALIZERS)
+
+def __getattr__(name):
+    if name in AUTO_VIEWS:
+        return AUTO_VIEWS.get(name)
+    raise AttributeError(f'module {__name__} has no attribute {name}')
