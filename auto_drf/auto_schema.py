@@ -16,6 +16,8 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.serializers import ListSerializer, ModelSerializer
 from rest_framework import permissions
 
+from rest_framework_filters.filters import RelatedFilter
+
 from drf_yasg import openapi
 from drf_yasg.generators import OpenAPISchemaGenerator
 from drf_yasg.views import get_schema_view
@@ -64,11 +66,30 @@ def get_path(view_class, schema):
 
     all_filters = view_class.filter_class.base_filters.copy()
     all_filters.update(view_class.filter_class.declared_filters)
-    # print(vars(view_class.filter_class))
-    # print('')
 
     parameters = []
     for filter_name, filter_obj in all_filters.items():
+
+        if isinstance(filter_obj, RelatedFilter):
+            # TODO Extract
+            all_related_filters = filter_obj.filterset.base_filters.copy()
+            all_related_filters.update(filter_obj.filterset.declared_filters)
+            for related_filter_name, related_filter_obj in all_related_filters.items():
+                related_filter_full_name = '__'.join((filter_name, related_filter_name))
+                try:
+                    related_subfield, lookup_expr = related_filter_name.split('__')
+                except ValueError:
+                    related_subfield, lookup_expr = related_filter_name, 'exact'
+                parameters.append({
+                    'name': related_filter_full_name,
+                    'in': 'query',
+                    'schema': {
+                        'type': FILTER_TYPE_LOOKUP.get(filter_obj.__class__, 'string'),
+                        'title': related_filter_name,
+                    },
+                    'x-relatedField': filter_name,
+                    'x-filterDescription': f'{related_subfield} {lookup_expr}',
+                })
 
         try:
             related_field, lookup_expr = filter_name.split('__')

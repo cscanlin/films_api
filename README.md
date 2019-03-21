@@ -46,8 +46,7 @@ Tests are in `tests.py` and can be run with:
 
 
 ### TODO
-  - add nested filter support to db_table !!
+  - better nested serializer/route handling
   - PropTypes
   - control fields present in serializer (replace __all__)
-  - better nested serializer/route handling
   - True NEST_LEVEL??
