@@ -13,7 +13,7 @@ def generate_auto_urlpatterns(auto_views):
 
 urlpatterns = generate_auto_urlpatterns(AUTO_VIEWS)
 urlpatterns += [
-    path('open_api_schema/', generate_auto_drf_schema),
+    path('open_api_schema.json', generate_auto_drf_schema),
     path('swagger/', SWAGGER_SCHEMA_VIEW.with_ui('swagger', cache_timeout=0)),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', SWAGGER_SCHEMA_VIEW.without_ui(cache_timeout=0)),
 ]

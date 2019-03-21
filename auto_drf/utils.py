@@ -15,9 +15,9 @@ def model_related_fields(model):
 
 def all_table_fields(model):
     all_fields = [field.name for field in model._meta.fields]
-    all_fields += model_related_fields(model)
+    all_fields += [field.name for field in model_related_fields(model)]
 
     if hasattr(model, 'calculated_properties'):
         all_fields += list(model.calculated_properties().keys())
 
-    return all_fields
+    return list(dict.fromkeys(all_fields))

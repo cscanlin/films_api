@@ -2,7 +2,7 @@ from django.db.models.fields.related import ManyToManyField
 from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
 from rest_framework import serializers
 
-from .utils import get_auto_drf_models, model_related_fields
+from .utils import get_auto_drf_models, model_related_fields, all_table_fields
 
 MANY_REL_TYPES = (ManyToManyField, ManyToOneRel, ManyToManyRel)
 
@@ -55,14 +55,18 @@ def generate_auto_serializers():
     auto_serializers = {}
     for model in get_auto_drf_models():
 
+        swagger_schema_fields = {
+            'x-orderedFields': all_table_fields(model)
+        }
+        if hasattr(model, 'relations_diplay_fields'):
+            swagger_schema_fields['x-relationsDiplayFields'] = model.relations_diplay_fields()
+
         meta_attributes = {
             'model': model,
             'fields': '__all__',
+            'swagger_schema_fields': swagger_schema_fields,
         }
-        if hasattr(model, 'relations_diplay_fields'):
-            meta_attributes['swagger_schema_fields'] = {
-                'relationsDiplayFields': model.relations_diplay_fields()
-            }
+
         Meta = type('Meta', (object,), meta_attributes)
 
         additional_attrs = {}

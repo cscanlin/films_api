@@ -13,7 +13,7 @@ from rest_framework.fields import (
     IntegerField,
 )
 from rest_framework.generics import ListCreateAPIView
-from rest_framework.serializers import ListSerializer
+from rest_framework.serializers import ListSerializer, ModelSerializer
 from rest_framework import permissions
 
 from drf_yasg import openapi
@@ -36,6 +36,75 @@ FIELD_TYPE_LOOKUP = {
     FloatField: 'number',
     IntegerField: 'integer',
 }
+
+def get_schema(view_class):
+    properties = {}
+    model = view_class.serializer_class.Meta.model
+    for field_name, field_obj in view_class.serializer_class().get_fields().items():
+
+        if isinstance(field_obj, ListSerializer):
+            field_type = 'array'
+        elif isinstance(field_obj, ModelSerializer):
+            field_type = 'object'
+        else:
+            field_type = FIELD_TYPE_LOOKUP.get(field_obj.__class__, 'string')
+        properties[field_name] = {'type': field_type}
+
+    schema = {
+        'type': 'object',
+        'properties': properties,
+        'x-orderedFields': all_table_fields(view_class.serializer_class.Meta.model),
+    }
+    if hasattr(model, 'relations_diplay_fields'):
+        schema['x-relationsDiplayFields'] = model.relations_diplay_fields()
+
+    return schema
+
+def get_path(view_class, schema):
+
+    all_filters = view_class.filter_class.base_filters.copy()
+    all_filters.update(view_class.filter_class.declared_filters)
+    # print(vars(view_class.filter_class))
+    # print('')
+
+    parameters = []
+    for filter_name, filter_obj in all_filters.items():
+
+        try:
+            related_field, lookup_expr = filter_name.split('__')
+        except ValueError:
+            related_field, lookup_expr = filter_name, 'exact'
+
+        parameters.append({
+            'name': filter_name,
+            'in': 'query',
+            'schema': {
+                'type': FILTER_TYPE_LOOKUP.get(filter_obj.__class__, 'string'),
+                'title': filter_name,
+            },
+            'x-relatedField': related_field,
+            'x-filterDescription': lookup_expr,
+        })
+
+    operation_id = view_class.serializer_class.Meta.model._meta.verbose_name_plural + '_list'
+    return {
+        'get': {
+            'operationId': operation_id,
+            'parameters': parameters,
+            'responses': {
+                '200': {
+                    'content': {
+                        'application/json': {
+                            'schema': {
+                                'type': 'array',
+                                'items': schema,
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    }
 
 def generate_auto_drf_schema(request):
 
@@ -61,74 +130,8 @@ def generate_auto_drf_schema(request):
 
         view_relative_route = urljoin(API_ROOT_PATH, view_class.url_route)
         open_api_schema['paths'][view_relative_route] = get_path(view_class, schema)
-
     return JsonResponse(open_api_schema)
 
-def get_schema(view_class):
-    properties = {}
-    model = view_class.serializer_class.Meta.model
-    for field_name, field_obj in view_class.serializer_class().get_fields().items():
-
-        if isinstance(field_obj, ListSerializer):
-            field_type = 'array'
-        else:
-            field_type = FIELD_TYPE_LOOKUP.get(field_obj.__class__, 'string')
-        properties[field_name] = {'type': field_type}
-
-        if hasattr(model, 'relations_diplay_fields'):
-            display_accessor = model.relations_diplay_fields().get(field_name)
-            properties[field_name]['x-displayAccessor'] = display_accessor
-
-    return {
-        'type': 'object',
-        'properties': properties,
-        'x-orderedFields': all_table_fields(view_class.serializer_class.Meta.model),
-    }
-
-def get_path(view_class, schema):
-
-    all_filters = view_class.filter_class.base_filters.copy()
-    all_filters.update(view_class.filter_class.declared_filters)
-
-    parameters = []
-    for filter_name, filter_obj in all_filters.items():
-
-        try:
-            related_field, lookup_expr = filter_name.split('__')
-        except ValueError:
-            related_field, lookup_expr = filter_name, 'exact'
-
-        parameters.append({
-            'name': filter_name,
-            'in': 'query',
-            'schema': {
-                'type': FILTER_TYPE_LOOKUP.get(filter_obj.__class__, 'string'),
-                'title': filter_name,
-                'description': lookup_expr,
-            },
-            'x-filterParam': True,
-            'x-relatedField': related_field,
-        })
-
-    operation_id = view_class.serializer_class.Meta.model._meta.verbose_name_plural + '_list'
-    return {
-        'get': {
-            'operationId': operation_id,
-            'parameters': parameters,
-            'responses': {
-                '200': {
-                    'content': {
-                        'application/json': {
-                            'schema': {
-                                'type': 'array',
-                                'items': schema,
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    }
 
 class AutoDRFSchemaGenerator(OpenAPISchemaGenerator):
 
