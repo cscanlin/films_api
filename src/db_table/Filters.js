@@ -74,7 +74,13 @@ class DynamicFilter extends React.Component {
 }
 
 DynamicFilter.propTypes = {
-  availableFilters: PropTypes.arrayOf(PropTypes.object).isRequired,
+  availableFilters: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        'x-relatedField': PropTypes.string.isRequired,
+        'x-filterDescription': PropTypes.string,
+      }),
+  ).isRequired,
   onChange: PropTypes.func.isRequired,
 }
 

@@ -62,6 +62,7 @@ class DBTable extends React.Component {
               row={row}
               fieldName={fieldName}
               renderArrayItem={renderArrayItem}
+              expandable
             />
           )
         }

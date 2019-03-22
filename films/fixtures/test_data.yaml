@@ -13,7 +13,7 @@
 - model: films.director
   pk: 4
   fields:
-    name: Sarah
+    name: Sue
 - model: films.film
   pk: 1
   fields:
