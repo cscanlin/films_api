@@ -32,7 +32,7 @@ def add_nested_serializers(auto_serializers):
             relationship_serializer_name = rel_field.related_model._meta.object_name + 'Serializer'
             nested_serializer = type(
                 relationship_serializer_name + serializer_model.__name__ + 'Level_1',
-                base_serializers[relationship_serializer_name].__bases__,
+                (base_serializers[relationship_serializer_name], ),
                 dict(base_serializers[relationship_serializer_name].__dict__),
             )
 
