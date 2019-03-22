@@ -35,9 +35,10 @@ def generate_auto_views(auto_serializers):
             if isinstance(nested_serializer, ListSerializer):
                 nested_serializer_obj = nested_serializer._kwargs['child']
                 nested_list_view_name = model._meta.object_name + nested_field_name + 'List'
+                # related_model = nested_serializer_obj.__class__.Meta.model
                 model_view_attributes = {
                     'serializer_class': nested_serializer_obj.__class__,
-                    # 'filter_class': RatingFilter,
+                    # 'filter_class': AUTO_FILTERS.get(related_model.__name__ + 'Filter'),
                     'get_queryset': get_queryset(model, nested_field_name),
                     'url_route': '/'.join((model_plural_name, '<int:pk>',
                                            nested_field_name, ''))
