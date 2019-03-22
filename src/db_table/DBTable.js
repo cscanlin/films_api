@@ -1,7 +1,8 @@
 import React from 'react'
 import ReactTable, { ReactTableDefaults } from 'react-table'
-import 'react-table/react-table.css'
+import PropTypes from 'prop-types'
 
+import 'react-table/react-table.css'
 import { ArrayCell } from './Cells.js'
 import { DynamicFilter } from './Filters.js'
 
@@ -38,7 +39,7 @@ class DBTable extends React.Component {
 
   getColumns(metadata) {
     let columns = []
-    if (Object.keys(metadata).length) {
+    if (metadata && Object.keys(metadata).length) {
       columns = metadata.orderedFields.map((fieldName) => {
         const fieldData = metadata.fields[fieldName]
         const column = {
@@ -50,7 +51,11 @@ class DBTable extends React.Component {
         }
         if (fieldData.type === 'array') {
           const renderArrayItem = fieldData.displayAccessor
-            ? (arrayItem) => <p>{arrayItem[fieldData.displayAccessor]}</p>
+            ? (arrayItem) => (
+              <p key={arrayItem[fieldData.displayAccessor]}>
+                {arrayItem[fieldData.displayAccessor]}
+              </p>
+            )
             : undefined
           column.Cell = (row) => (
             <ArrayCell
@@ -101,7 +106,7 @@ class DBTable extends React.Component {
           pages: Math.ceil(res.results.count / state.pageSize),
           loading: false,
         })
-    })
+    }).catch(error => console.error(error))
   }
 
   render() {
@@ -126,6 +131,11 @@ class DBTable extends React.Component {
       </div>
     )
   }
+}
+
+DBTable.propTypes = {
+  APIUrl: PropTypes.string.isRequired,
+  loadMetadata: PropTypes.func.isRequired,
 }
 
 export default DBTable

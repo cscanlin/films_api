@@ -22,6 +22,7 @@ class ArrayCell extends React.Component {
   }
 
   render() {
+    console.log(this.props.row);
     const dropdownArrow = this.state.expanded ? '\u25BC' : '\u25C0'
     const dropdownStyle = {
       display: this.fieldData().length && this.props.expandable ? 'inline-block' : 'none',
@@ -46,7 +47,7 @@ class ArrayCell extends React.Component {
 }
 
 ArrayCell.propTypes = {
-  row: PropTypes.arrayOf(PropTypes.any).isRequired,
+  row: PropTypes.object.isRequired,
   fieldName: PropTypes.string.isRequired,
   expandable: PropTypes.bool.isRequired,
   renderArrayItem: PropTypes.func,

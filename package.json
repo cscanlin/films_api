@@ -1,6 +1,7 @@
 {
   "name": "films_api",
   "version": "0.1.0",
+  "proxy": "http://localhost:8000",
   "private": true,
   "devDependencies": {
     "react-scripts": "^2.1.8"

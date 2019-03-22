@@ -16,10 +16,12 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    re_path(r'db_table/.*', views.index, name='index'),
     path(settings.AUTO_DRF.get('API_ROOT_PATH', 'api/'), include('auto_drf.auto_urls')),
-    path('db_table/', include('db_table.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

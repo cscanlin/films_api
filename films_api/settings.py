@@ -39,18 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'rest_framework',
-    'django_filters',
     'rest_framework_filters',
     'drf_yasg',
     'auto_drf',
-    'db_table',
     'films',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',
                                 'rest_framework.filters.OrderingFilter'),
-    'DEFAULT_METADATA_CLASS': 'db_table.metadata.FilterMetadata',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
@@ -75,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'films_api.middleware.dev_cors_middleware',
 ]
 
 ROOT_URLCONF = 'films_api.urls'

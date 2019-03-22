@@ -43,7 +43,7 @@ class DynamicFilter extends React.Component {
 
   filterSelect() {
     const filterTypeOptions = this.props.availableFilters.map(filterType => (
-      <option value={filterType.name}>
+      <option key={filterType.name} value={filterType.name}>
         {filterType['x-filterDescription'] || filterType.name}
       </option>
     ))
