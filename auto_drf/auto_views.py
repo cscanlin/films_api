@@ -4,17 +4,8 @@ from rest_framework.serializers import ListSerializer
 from .auto_filters import AUTO_FILTERS
 from .auto_serializer import AUTO_SERIALIZERS
 
-# These classes contain the bulk of the logic and are the most common place for customization
-# Each class inherits from either a `ListCreateAPIView` class for general endpoints,
-# and a `RetrieveUpdateDestroyAPIView` for specific id endpoints. These classes create functions
-# for each of the http verbs (which can be easily customized, see `FilmRatingList`).
-# The classes also control which serializer to use, and allow for the specification of filters,
-# including an ordering filter. Pagination is applied to all rest requests, and is set in `settings.py`
-
 def get_queryset(model, nested_field_name):
-    return lambda self: (getattr(
-        model.objects.get(**self.kwargs), nested_field_name
-    ).all())
+    return lambda self: getattr(model.objects.get(**self.kwargs), nested_field_name).all()
 
 def generate_auto_views(auto_serializers):
     auto_views = {}
@@ -35,13 +26,12 @@ def generate_auto_views(auto_serializers):
             if isinstance(nested_serializer, ListSerializer):
                 nested_serializer_obj = nested_serializer._kwargs['child']
                 nested_list_view_name = model._meta.object_name + nested_field_name + 'List'
-                # related_model = nested_serializer_obj.__class__.Meta.model
+                related_model = nested_serializer_obj.__class__.Meta.model
                 model_view_attributes = {
                     'serializer_class': nested_serializer_obj.__class__,
-                    # 'filter_class': AUTO_FILTERS.get(related_model.__name__ + 'Filter'),
+                    'filter_class': AUTO_FILTERS.get(related_model.__name__ + 'Filter'),
                     'get_queryset': get_queryset(model, nested_field_name),
-                    'url_route': '/'.join((model_plural_name, '<int:pk>',
-                                           nested_field_name, ''))
+                    'url_route': '/'.join((model_plural_name, '<int:pk>', nested_field_name, ''))
                 }
                 nested_model_list_view = type(nested_list_view_name,
                                               (generics.ListCreateAPIView,),

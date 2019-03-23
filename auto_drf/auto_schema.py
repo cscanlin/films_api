@@ -67,8 +67,11 @@ def get_schema(view_class):
 
 def get_path(view_class, schema):
 
-    all_filters = view_class.filter_class.base_filters.copy()
-    all_filters.update(view_class.filter_class.declared_filters)
+    if hasattr(view_class, 'filter_class'):
+        all_filters = view_class.filter_class.base_filters.copy()
+        all_filters.update(view_class.filter_class.declared_filters)
+    else:
+        all_filters = {}
 
     parameters = []
     for filter_name, filter_obj in all_filters.items():
