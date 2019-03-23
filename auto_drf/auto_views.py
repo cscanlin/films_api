@@ -25,8 +25,8 @@ def generate_auto_views(auto_serializers):
         for nested_field_name, nested_serializer in serializer_class._declared_fields.items():
             if isinstance(nested_serializer, ListSerializer):
                 nested_serializer_obj = nested_serializer._kwargs['child']
-                nested_list_view_name = model._meta.object_name + nested_field_name + 'List'
                 related_model = nested_serializer_obj.__class__.Meta.model
+                nested_list_view_name = model._meta.object_name + related_model.__name__ + 'List'
                 model_view_attributes = {
                     'serializer_class': nested_serializer_obj.__class__,
                     'filter_class': AUTO_FILTERS.get(related_model.__name__ + 'Filter'),
