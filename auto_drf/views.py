@@ -1,8 +1,8 @@
 from rest_framework import generics
 from rest_framework.serializers import ListSerializer
 
-from .auto_filters import AUTO_FILTERS
-from .auto_serializer import AUTO_SERIALIZERS
+from .filters import AUTO_FILTERS
+from .serializer import AUTO_SERIALIZERS
 
 def get_queryset(model, nested_field_name):
     return lambda self: getattr(model.objects.get(**self.kwargs), nested_field_name).all()

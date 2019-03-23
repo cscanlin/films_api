@@ -37,6 +37,17 @@ class DBTable extends React.Component {
     )).join(',')
   }
 
+  renderArrayItem(fieldData) {
+    if (fieldData.displayAccessor) {
+      return (arrayItem) => (
+        <p key={arrayItem[fieldData.displayAccessor]}>
+          {arrayItem[fieldData.displayAccessor]}
+        </p>
+      )
+    }
+    return undefined
+  }
+
   getColumns(metadata) {
     let columns = []
     if (metadata && Object.keys(metadata).length) {
@@ -50,18 +61,11 @@ class DBTable extends React.Component {
                     : f => JSON.stringify(f[fieldName]),
         }
         if (fieldData.type === 'array') {
-          const renderArrayItem = fieldData.displayAccessor
-            ? (arrayItem) => (
-              <p key={arrayItem[fieldData.displayAccessor]}>
-                {arrayItem[fieldData.displayAccessor]}
-              </p>
-            )
-            : undefined
           column.Cell = (row) => (
             <ArrayCell
               row={row}
               fieldName={fieldName}
-              renderArrayItem={renderArrayItem}
+              renderArrayItem={this.renderArrayItem}
               expandable
             />
           )
@@ -82,8 +86,6 @@ class DBTable extends React.Component {
   }
 
   fetchData(state, instance) {
-    // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
-    // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
     this.setState({ loading: true })
 
     const params = {...this.filterParams(state.filtered)}
@@ -113,23 +115,21 @@ class DBTable extends React.Component {
   render() {
     const { metadata, data, pages, loading } = this.state
     return (
-      <div>
-        <ReactTable
-          column={{
-            ...ReactTableDefaults.column,
-            style: {whiteSpace: 'normal'},
-          }} // FIXME
-          columns={this.getColumns(metadata)}
-          manual // Forces table not to paginate or sort automatically, so we can handle it server-side
-          data={data}
-          pages={pages} // Display the total number of pages
-          loading={loading} // Display the loading overlay when we need it
-          onFetchData={this.fetchData} // Request new data when things change
-          filterable // FIXME
-          defaultPageSize={10} // FIXME
-          className='-striped -highlight'
-        />
-      </div>
+      <ReactTable
+        column={{
+          ...ReactTableDefaults.column,
+          style: {whiteSpace: 'normal'},
+        }} // FIXME
+        columns={this.getColumns(metadata)}
+        manual // Forces table not to paginate or sort automatically, so we can handle it server-side
+        data={data}
+        pages={pages} // Display the total number of pages
+        loading={loading} // Display the loading overlay when we need it
+        onFetchData={this.fetchData} // Request new data when things change
+        filterable // FIXME
+        defaultPageSize={10} // FIXME
+        className='-striped -highlight'
+      />
     )
   }
 }

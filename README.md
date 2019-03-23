@@ -46,8 +46,7 @@ Tests are in `tests.py` and can be run with:
 
 
 ### TODO
-  - better nested serializer/route handling
-    - fix tests
+  - fix tests
   - control fields present in serializer (replace __all__)
   - Full OpenApi3 w/ nested schema and $ref
     - remove swagger??

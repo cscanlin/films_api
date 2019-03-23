@@ -22,7 +22,7 @@ from drf_yasg import openapi
 from drf_yasg.generators import OpenAPISchemaGenerator
 from drf_yasg.views import get_schema_view
 
-from .auto_views import AUTO_VIEWS
+from .views import AUTO_VIEWS
 from .utils import all_table_fields
 
 API_ROOT_PATH = '/' + settings.AUTO_DRF.get('API_ROOT_PATH', 'api/')

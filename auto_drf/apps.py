@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class FilmsConfig(AppConfig):
+class AutoDRFConfig(AppConfig):
     name = 'auto_drf'

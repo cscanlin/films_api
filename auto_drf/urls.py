@@ -1,7 +1,7 @@
 from django.urls import path, re_path
 
-from .auto_views import AUTO_VIEWS
-from .auto_schema import generate_auto_drf_schema, SWAGGER_SCHEMA_VIEW
+from .views import AUTO_VIEWS
+from .schema import generate_auto_drf_schema, SWAGGER_SCHEMA_VIEW
 
 def generate_auto_urlpatterns(auto_views):
     auto_urlpatterns = []
