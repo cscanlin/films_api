@@ -37,22 +37,6 @@ def generate_auto_views(auto_serializers):
                                               (generics.ListCreateAPIView,),
                                               model_view_attributes)
                 auto_views[nested_list_view_name] = nested_model_list_view
-            # elif isinstance(nested_serializer, ModelSerializer):
-            #     nested_detail_view_name = model._meta.object_name + nested_field_name + 'Detail'
-            #     related_model = nested_serializer.__class__.Meta.model
-            #     model_view_attributes = {
-            #         'serializer_class': nested_serializer.__class__,
-            #         # 'filter_class': AUTO_FILTERS.get(related_model.__name__ + 'Filter'),
-            #         'get_queryset': lambda self: related_model.objects.filter(
-            #             **{model._meta.model_name: self.kwargs['pk']},
-            #         ),
-            #         # 'get_queryset': get_queryset(model, nested_field_name, many=False),
-            #         'url_route': '/'.join((model_plural_name, '<int:pk>', nested_field_name, ''))
-            #     }
-            #     nested_model_detail_view = type(nested_detail_view_name,
-            #                                     (generics.RetrieveUpdateDestroyAPIView,),
-            #                                     model_view_attributes)
-            #     auto_views[nested_detail_view_name] = nested_model_detail_view
 
         model_view_attributes = {
             'queryset': queryset,
