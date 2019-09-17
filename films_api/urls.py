@@ -24,4 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'db_table/.*', views.index, name='index'),
     path(settings.AUTO_DRF.get('API_ROOT_PATH', 'api/'), include('auto_drf.auto_urls')),
+    path('films/', include('films.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
